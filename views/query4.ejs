@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Аукцион-рекордсмен</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Аукцион, где продано больше всего предметов</h1>
+    <a href="/">← На главную</a><br><br>
+    <% if (auction) { %>
+      <p><strong>Название:</strong> <%= auction.name %></p>
+      <p><strong>Место:</strong> <%= auction.place %></p>
+      <p><strong>Дата:</strong> <%= auction.date.toLocaleDateString %></p>
+      <p><strong>Продано лотов:</strong> <%= auction.sold %></p>
+    <% } else { %>
+      <p>Нет данных о продажах.</p>
+    <% } %>
+  </div>
+</body>
+</html>

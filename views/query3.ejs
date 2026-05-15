@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Максимальная разница в цене</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Предмет с наибольшей разницей между начальной и конечной ценой</h1>
+    <a href="/">← На главную</a><br><br>
+    <% if (item) { %>
+      <p><strong>Название:</strong> <%= item.name %></p>
+      <p><strong>Стартовая цена:</strong> <%= item.start_price %> руб.</p>
+      <p><strong>Конечная цена:</strong> <%= item.final_price %> руб.</p>
+      <p><strong>Разница:</strong> <%= item.difference %> руб.</p>
+    <% } else { %>
+      <p>Нет данных о продажах.</p>
+    <% } %>
+  </div>
+</body>
+</html>

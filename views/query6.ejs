@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Продавец самого дорогого лота</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Продавец самого дорогого лота</h1>
+    <a href="/">← На главную</a><br><br>
+    <% if (seller) { %>
+      <p><strong>ФИО:</strong> <%= seller.full_name %></p>
+      <p><strong>Паспорт:</strong> <%= seller.passport %></p>
+      <p><strong>Цена лота:</strong> <%= seller.final_price %> руб.</p>
+    <% } else { %>
+      <p>Нет данных о продажах.</p>
+    <% } %>
+  </div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Аукционы по специфике</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Аукционы, где продавались предметы заданной специфики</h1>
+    <a href="/">← На главную</a><br><br>
+    <form method="post">
+  <label>Выберите специфику:</label><br>
+  <select name="specifics" required style="width:100%; margin-bottom:10px;">
+    <option value=""disabled selected>-- выберите --</option>
+    <% specifics.forEach(s => { %>
+      <option value="<%= s.specifics %>"><%= s.specifics %></option>
+    <% }) %>
+  </select><br>
+  <button type="submit">Искать</button>
+</form>
+    <% if (typeof auctions !== 'undefined') { %>
+      <h2>Результаты</h2>
+      <% if (auctions.length === 0) { %>
+        <p>Ничего не найдено.</p>
+      <% } else { %>
+        <table>
+          <tr><th>Название</th><th>Место</th><th>Дата</th></tr>
+          <% auctions.forEach(a => { %>
+            <tr>
+              <td><%= a.name %></td>
+              <td><%= a.place %></td>
+              <td><%= new Date(a.date).toLocaleDateString('ru-RU') %></td>
+            </tr>
+          <% }) %>
+        </table>
+      <% } %>
+    <% } %>
+  </div>
+</body>
+</html>

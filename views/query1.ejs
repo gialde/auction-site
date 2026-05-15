@@ -11,14 +11,15 @@
     <p><a href="/">← На главную</a></p>
     
     <form method="POST" action="/query1">
-      <label>Дата аукциона:</label><br>
-      <input type="date" name="date" required><br><br>
-      
-      <label>ID аукциона:</label><br>
-      <input type="number" name="auction_id" required><br><br>
-      
-      <button type="submit">Искать</button>
-    </form>
+  <label>Выберите аукцион:</label><br>
+  <select name="auction_id" required style="width:100%; margin-bottom:10px;">
+    <option value=""disabled selected>-- выберите --</option>
+    <% auctions.forEach(a => { %>
+      <option value="<%= a.id %>"><%= a.name %> (<%= new Date(a.date).toLocaleDateString('ru-RU') %>)</option>
+    <% }) %>
+  </select><br>
+  <button type="submit">Показать предметы</button>
+</form>
 
     <% if (typeof items !== 'undefined') { %>
       <h2>Результаты</h2>
