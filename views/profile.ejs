@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Профиль</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>👤 Профиль</h1>
+    <a href="/">← На главную</a>
+    <% if (user) { %>
+      <p><strong>ФИО:</strong> <%= user.full_name %></p>
+      <p><strong>Email:</strong> <%= user.email %></p>
+      <p><strong>Роль:</strong> <%= user.role === 'seller' ? 'Продавец' : user.role === 'admin' ? 'Администратор' : 'Покупатель' %></p>
+    <% } %>
+  </div>
+</body>
+</html>

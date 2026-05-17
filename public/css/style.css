@@ -1,3 +1,4 @@
+/* ===== БАЗА ===== */
 * {
   margin: 0;
   padding: 0;
@@ -5,156 +6,292 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #0a0a0f;
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, #1a1a3e 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, #2a1a1a 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, #1a2a1a 0%, transparent 50%);
   min-height: 100vh;
   color: #e0e0e0;
   padding: 20px;
 }
 
+/* ===== СКРОЛЛБАР ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111;
+}
+::-webkit-scrollbar-thumb {
+  background: #c9a96e;
+  border-radius: 4px;
+}
+
+/* ===== КОНТЕЙНЕР ===== */
 .container {
   max-width: 900px;
   margin: 0 auto;
-  background: #1e1e30;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  border: 1px solid #2a2a45;
+  background: rgba(20, 20, 35, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 35px 40px;
+  border-radius: 20px;
+  box-shadow: 
+    0 0 40px rgba(201, 169, 110, 0.08),
+    0 0 0 1px rgba(201, 169, 110, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(201, 169, 110, 0.2);
 }
 
+/* ===== ЗАГОЛОВКИ ===== */
 h1 {
   color: #c9a96e;
-  margin-bottom: 20px;
-  font-size: 28px;
-  border-bottom: 2px solid #c9a96e;
-  padding-bottom: 10px;
+  margin-bottom: 25px;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  border-bottom: 2px solid rgba(201, 169, 110, 0.3);
+  padding-bottom: 15px;
+  text-shadow: 0 0 30px rgba(201, 169, 110, 0.2);
 }
 
 h2 {
-  color: #c9a96e;
-  margin: 20px 0 10px;
+  color: #d4b87a;
+  margin: 25px 0 15px;
   font-size: 22px;
+  font-weight: 600;
 }
 
 h3 {
   color: #c9a96e;
   margin: 15px 0 10px;
   font-size: 18px;
+  font-weight: 500;
 }
 
-nav a {
-  display: inline-block;
-  background: #2a2a45;
-  color: #e0e0e0;
-  text-decoration: none;
-  padding: 12px 20px;
-  margin: 5px;
-  border-radius: 8px;
-  transition: all 0.3s;
-  border: 1px solid #3a3a55;
-}
-
-nav a:hover {
-  background: #c9a96e;
-  color: #1a1a2e;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(201, 169, 110, 0.3);
-}
-
+/* ===== ССЫЛКИ ===== */
 a {
   color: #c9a96e;
   text-decoration: none;
+  transition: color 0.3s;
 }
-
 a:hover {
-  text-decoration: underline;
+  color: #e0c78e;
 }
 
+/* ===== НАВИГАЦИЯ ===== */
+nav a {
+  display: inline-block;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(201, 169, 110, 0.2);
+  color: #e0e0e0;
+  text-decoration: none;
+  padding: 12px 22px;
+  margin: 5px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+nav a:hover {
+  background: rgba(201, 169, 110, 0.15);
+  border-color: #c9a96e;
+  color: #c9a96e;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(201, 169, 110, 0.15);
+}
+
+/* ===== ФОРМЫ ===== */
 form {
   margin: 15px 0;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   color: #aaa;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 input, select, textarea {
   width: 100%;
-  padding: 10px 15px;
+  padding: 12px 16px;
   margin-bottom: 15px;
-  background: #252540;
-  border: 1px solid #3a3a55;
-  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
   color: #e0e0e0;
   font-size: 14px;
-  transition: border 0.3s;
+  transition: all 0.3s ease;
+  font-family: inherit;
 }
 
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: #c9a96e;
-  box-shadow: 0 0 10px rgba(201, 169, 110, 0.2);
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
+  background: rgba(255,255,255,0.05);
 }
 
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c9a96e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ===== КНОПКИ ===== */
 button {
   background: #c9a96e;
-  color: #1a1a2e;
+  color: #0a0a0f;
   border: none;
-  padding: 12px 25px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: bold;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s;
-  margin-right: 10px;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-family: inherit;
 }
 
 button:hover {
   background: #d4b87a;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(201, 169, 110, 0.4);
+  box-shadow: 0 8px 30px rgba(201, 169, 110, 0.3);
 }
 
+button:active {
+  transform: translateY(0);
+}
+
+/* ===== ТАБЛИЦЫ ===== */
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 15px 0;
-  background: #252540;
-  border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 12px;
   overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
 }
 
 th {
-  background: #c9a96e;
-  color: #1a1a2e;
-  padding: 12px;
+  background: rgba(201, 169, 110, 0.15);
+  color: #c9a96e;
+  padding: 14px 16px;
   text-align: left;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(201, 169, 110, 0.3);
 }
 
 td {
-  padding: 12px;
-  border-bottom: 1px solid #2a2a45;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
   color: #ccc;
+  font-size: 14px;
+}
+
+tr:last-child td {
+  border-bottom: none;
 }
 
 tr:hover td {
-  background: #2a2a45;
+  background: rgba(201, 169, 110, 0.03);
 }
 
+/* ===== КАРТОЧКИ ЛОТОВ ===== */
+.item-card {
+  background: rgba(255,255,255,0.02);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.item-card:hover {
+  border-color: rgba(201, 169, 110, 0.3);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  transform: translateY(-2px);
+}
+
+.item-card h3 {
+  color: #e0e0e0;
+  font-size: 16px;
+}
+
+.item-card .price {
+  font-size: 22px;
+  font-weight: 700;
+  color: #c9a96e;
+}
+
+/* ===== УВЕДОМЛЕНИЯ ===== */
+.message-success {
+  color: #4CAF50;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.message-error {
+  color: #ff6b6b;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(255, 107, 107, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+/* ===== ПРОЧЕЕ ===== */
 p {
   margin: 10px 0;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 small {
-  color: #888;
+  color: #777;
   font-size: 12px;
 }
 
 em {
   color: #ff6b6b;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  margin: 20px 0;
+}
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+    margin: 10px;
+    border-radius: 14px;
+  }
+  h1 {
+    font-size: 24px;
+  }
 }

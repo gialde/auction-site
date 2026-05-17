@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Избранное</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>❤️ Избранное</h1>
+    <a href="/">← На главную</a>
+    <div id="fav-list"></div>
+  </div>
+  <script>
+  const userId = '<%= user ? user.id : "guest" %>';
+  const favs = JSON.parse(localStorage.getItem('favorites_' + userId) || '[]');
+  const list = document.getElementById('fav-list');
+  if (favs.length === 0) {
+    list.innerHTML = '<p>Нет избранных лотов.</p>';
+  } else {
+    let html = '<table><tr><th>Название</th><th>Цена</th><th>Действие</th></tr>';
+    favs.forEach(f => {
+      html += `<tr><td>${f.name}</td><td>${f.price} руб.</td><td><button onclick="removeFav('${f.id}')">Удалить</button></td></tr>`;
+    });
+    html += '</table>';
+    list.innerHTML = html;
+  }
+  function removeFav(id) {
+    let favs = JSON.parse(localStorage.getItem('favorites_' + userId) || '[]');
+    favs = favs.filter(f => f.id !== id);
+    localStorage.setItem('favorites_' + userId, JSON.stringify(favs));
+    location.reload();
+  }
+</script>
+</body>
+</html>

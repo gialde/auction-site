@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Регистрация</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container" style="max-width: 450px;">
+    <h1>Регистрация</h1>
+    <% if (error) { %>
+      <p style="color: #ff6b6b;"><%= error %></p>
+    <% } %>
+    <form method="post">
+      <label>ФИО:</label>
+      <input name="full_name" required>
+      <label>Email:</label>
+      <input type="email" name="email" required>
+      <label>Пароль:</label>
+      <input type="password" name="password" required>
+      <label>Роль:</label>
+      <select name="role">
+  <option value="user">Покупатель</option>
+  <option value="seller">Продавец</option>
+  <option value="both">Продавец и Покупатель</option>
+</select>
+        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; cursor: pointer;">
+            <input type="checkbox" name="agreement" required style="width: auto; margin: 0;">
+            <span>Я согласен на <a href="/privacy" target="_blank">обработку персональных данных</a> и принимаю <a href="/terms" target="_blank">пользовательское соглашение</a></span>
+        </label>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+    <p>Есть аккаунт? <a href="/login">Войти</a></p>
+    <a href="/">← На главную</a>
+  </div>
+</body>
+</html>

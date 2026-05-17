@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Подтверждение email</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container" style="max-width: 450px;">
+    <h1>📧 Подтверждение</h1>
+    <p>Мы отправили код на <strong><%= email %></strong></p>
+    <% if (error) { %>
+      <p style="color: #ff6b6b;"><%= error %></p>
+    <% } %>
+    <form method="post" action="/verify">
+      <input type="hidden" name="email" value="<%= email %>">
+      <label>Введите код из письма:</label>
+      <input name="code" placeholder="123456" maxlength="6" required style="font-size:24px; text-align:center; letter-spacing:10px;">
+      <button type="submit">Подтвердить</button>
+    </form>
+    <p style="color: #888; margin-top: 15px;">
+        ⚠️ Не пришло письмо? Проверьте папку <strong>Спам</strong> в вашей почте.
+    </p>
+  </div>
+</body>
+</html>

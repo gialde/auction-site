@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Корзина</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🛒 Корзина</h1>
+    <a href="/">← На главную</a>
+    <div id="cart-list"></div>
+  </div>
+  <script>
+  const userId = '<%= user ? user.id : "guest" %>';
+  const cart = JSON.parse(localStorage.getItem('cart_' + userId) || '[]');
+  const list = document.getElementById('cart-list');
+  if (cart.length === 0) {
+    list.innerHTML = '<p>Корзина пуста.</p>';
+  } else {
+    let html = '<table><tr><th>Название</th><th>Цена</th><th>Действие</th></tr>';
+    cart.forEach(c => {
+      html += `<tr><td>${c.name}</td><td>${c.price} руб.</td><td><button onclick="removeFromCart('${c.id}')">Удалить</button></td></tr>`;
+    });
+    html += '</table>';
+    list.innerHTML = html;
+  }
+  function removeFromCart(id) {
+    let cart = JSON.parse(localStorage.getItem('cart_' + userId) || '[]');
+    cart = cart.filter(c => c.id !== id);
+    localStorage.setItem('cart_' + userId, JSON.stringify(cart));
+    location.reload();
+  }
+</script>
+</body>
+</html>

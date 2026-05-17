@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Управление пользователями</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>👥 Управление пользователями</h1>
+    <a href="/admin">← В админ-панель</a>
+
+    <% if (message) { %>
+      <p style="color: #c9a96e; font-weight: bold;"><%= message %></p>
+    <% } %>
+
+    <table>
+      <tr>
+        <th>ID</th><th>Email</th><th>ФИО</th><th>Роль</th><th>Подтверждён</th><th>Забанен</th><th>Действия</th>
+      </tr>
+      <% users.forEach(u => { %>
+        <tr>
+          <td><%= u.id %></td>
+          <td><%= u.email %></td>
+          <td><%= u.full_name %></td>
+          <td><%= u.role %></td>
+          <td><%= u.verified ? '✅' : '❌' %></td>
+          <td><%= u.banned ? '🚫' : '✅' %></td>
+          <td>
+            <% if (u.id !== user.id) { %>
+              <% if (u.banned) { %>
+                <form method="post" action="/admin/users/unban" style="display:inline;">
+                  <input type="hidden" name="user_id" value="<%= u.id %>">
+                  <button type="submit" style="background:#4CAF50;">Разбанить</button>
+                </form>
+              <% } else { %>
+                <form method="post" action="/admin/users/ban" style="display:inline;">
+                  <input type="hidden" name="user_id" value="<%= u.id %>">
+                  <button type="submit" style="background:#ff9800;">Забанить</button>
+                </form>
+              <% } %>
+              <form method="post" action="/admin/users/delete" style="display:inline;" onsubmit="return confirm('Удалить пользователя навсегда?')">
+                <input type="hidden" name="user_id" value="<%= u.id %>">
+                <button type="submit" style="background:#ff6b6b;">Удалить</button>
+              </form>
+            <% } else { %>
+              <em>Это вы</em>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </table>
+  </div>
+</body>
+</html>
