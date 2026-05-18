@@ -9,11 +9,75 @@
   <div class="container">
     <h1>👤 Профиль</h1>
     <a href="/">← На главную</a>
-    <% if (user) { %>
-      <p><strong>ФИО:</strong> <%= user.full_name %></p>
-      <p><strong>Email:</strong> <%= user.email %></p>
-      <p><strong>Роль:</strong> <%= user.role === 'seller' ? 'Продавец' : user.role === 'admin' ? 'Администратор' : 'Покупатель' %></p>
+
+    <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.06);">
+      <p><strong>ФИО:</strong> <%= profile.full_name %></p>
+      <p><strong>Email:</strong> <%= profile.email %></p>
+      <p><strong>Роль:</strong> <%= profile.role === 'seller' ? 'Продавец' : profile.role === 'admin' ? 'Администратор' : profile.role === 'both' ? 'Продавец и Покупатель' : 'Покупатель' %></p>
+      <p><strong>Баланс:</strong> <span style="font-size: 24px; color: #c9a96e; font-weight: bold;"><%= profile.balance %> руб.</span></p>
+    </div>
+
+    <!-- Пополнение баланса (заглушка) -->
+    <form method="post" action="/profile/topup" style="margin: 20px 0;">
+      <label>Пополнить баланс (руб.):</label>
+      <div style="display: flex; gap: 10px;">
+        <input type="number" name="amount" min="1" required placeholder="Сумма">
+        <button type="submit" style="width: auto;">Пополнить</button>
+      </div>
+    </form>
+
+    <!-- Мои ставки -->
+    <h2>📈 Мои ставки</h2>
+    <% if (myBids.length === 0) { %>
+      <p>Вы ещё не делали ставок.</p>
+    <% } else { %>
+      <table>
+        <tr><th>Лот</th><th>Старт. цена</th><th>Моя ставка</th><th>Время</th></tr>
+        <% myBids.forEach(b => { %>
+          <tr>
+            <td><%= b.item_name %></td>
+            <td><%= b.start_price %> руб.</td>
+            <td style="color: #c9a96e;"><%= b.amount %> руб.</td>
+            <td><%= new Date(b.bid_time).toLocaleString('ru-RU') %></td>
+          </tr>
+        <% }) %>
+      </table>
     <% } %>
+    <!-- Мои сделки -->
+<h2>🤝 Мои сделки</h2>
+<% if (deals.length === 0) { %>
+  <p>Нет активных сделок.</p>
+<% } else { %>
+  <table>
+    <tr><th>Лот</th><th>Сумма</th><th>Статус</th><th>Действия</th></tr>
+    <% deals.forEach(d => { %>
+      <tr>
+        <td><%= d.item_name %></td>
+        <td style="color: #c9a96e;"><%= d.amount %> руб.</td>
+        <td>
+          <% if (d.status === 'pending') { %>⏳ Ожидает оплаты
+          <% } else if (d.status === 'paid') { %>💰 Оплачен
+          <% } else if (d.status === 'shipped') { %>📦 Отправлен
+          <% } else if (d.status === 'received') { %>✅ Получен
+          <% } else if (d.status === 'done') { %>🎉 Завершён
+          <% } %>
+        </td>
+        <td>
+          <% if (d.status === 'pending' && d.buyer_id === user.id) { %>
+            <form method="post" action="/deal/<%= d.id %>/pay" style="display:inline;">
+              <button type="submit">Оплатить</button>
+            </form>
+          <% } %>
+          <% if (d.status === 'shipped' && d.buyer_id === user.id) { %>
+            <form method="post" action="/deal/<%= d.id %>/receive" style="display:inline;" onsubmit="return confirm('Подтвердить получение? Деньги будут переведены продавцу.')">
+              <button type="submit" style="background:#4CAF50;">Подтвердить получение</button>
+            </form>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+<% } %>
   </div>
 </body>
 </html>

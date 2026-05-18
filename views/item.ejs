@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= item.name %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <a href="/">← На главную</a>
+    <h1><%= item.name %></h1>
+    
+    <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.06);">
+      <p><strong>Описание:</strong> <%= item.description || 'Нет описания' %></p>
+      <p><strong>Аукцион:</strong> <%= item.auction_name %></p>
+      <p><strong>Лот №:</strong> <%= item.lot_number %></p>
+      <p><strong>Стартовая цена:</strong> <span style="font-size: 24px; color: #c9a96e;"><%= item.start_price %> руб.</span></p>
+      <% if (maxBid) { %>
+        <p><strong>Текущая ставка:</strong> <span style="font-size: 24px; color: #4CAF50;"><%= maxBid.amount %> руб.</span></p>
+      <% } else { %>
+        <p><strong>Текущая ставка:</strong> нет ставок</p>
+      <% } %>
+      <% if (user && user.role === 'admin' && !item.is_ended) { %>
+        <form method="post" action="/item/<%= item.id %>/end" style="margin-top: 20px;" onsubmit="return confirm('Завершить аукцион? Победитель будет определён по максимальной ставке.')">
+            <button type="submit" style="background:#4CAF50;">Завершить аукцион</button>
+        </form>
+      <% } %>
+
+      <% if (item.is_ended && item.winner_id) { %>
+        <div style="background: rgba(76,175,80,0.1); padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid rgba(76,175,80,0.3);">
+            <p style="color: #4CAF50;">Аукцион завершён. Победитель определён.</p>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Ставка -->
+    <% if (user) { %>
+      <form method="post" action="/item/<%= item.id %>/bid">
+        <label>Ваша ставка (руб.):</label>
+        <div style="display: flex; gap: 10px;">
+          <input type="number" name="amount" min="<%= maxBid ? maxBid.amount + 1 : item.start_price %>" step="0.01" required>
+          <button type="submit">Сделать ставку</button>
+        </div>
+      </form>
+      <p style="color: #888; font-size: 13px;">Ваш баланс: <%= user.balance || 0 %> руб.</p>
+    <% } else { %>
+      <p><a href="/login">Войдите</a>, чтобы сделать ставку.</p>
+    <% } %>
+
+    <!-- История ставок -->
+    <h2>📜 История ставок</h2>
+    <% if (bids.length === 0) { %>
+      <p>Ставок пока нет.</p>
+    <% } else { %>
+      <table>
+        <tr><th>Пользователь</th><th>Сумма</th><th>Время</th></tr>
+        <% bids.forEach(b => { %>
+          <tr>
+            <td><%= b.full_name %></td>
+            <td style="color: #c9a96e;"><%= b.amount %> руб.</td>
+            <td><%= new Date(b.bid_time).toLocaleString('ru-RU') %></td>
+          </tr>
+        <% }) %>
+      </table>
+    <% } %>
+  </div>
+</body>
+</html>

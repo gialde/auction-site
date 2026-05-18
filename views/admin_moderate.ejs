@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Модерация лотов</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📋 Модерация лотов</h1>
+    <a href="/admin">← В админ-панель</a>
+    
+    <h2>На модерации</h2>
+    <% if (pending.length === 0) { %>
+      <p>Нет лотов на модерации.</p>
+    <% } else { %>
+      <table>
+        <tr><th>Лот</th><th>Аукцион</th><th>Цена</th><th>Создатель</th><th>Действие</th></tr>
+        <% pending.forEach(item => { %>
+          <tr>
+            <td><%= item.name %></td>
+            <td><%= item.auction_name %></td>
+            <td><%= item.start_price %> руб.</td>
+            <td><%= item.creator_email %></td>
+            <td>
+              <form method="post" action="/admin/moderate/approve" style="display:inline;">
+                <input type="hidden" name="item_id" value="<%= item.id %>">
+                <button type="submit" style="background:#4CAF50;">Одобрить</button>
+              </form>
+              <form method="post" action="/admin/moderate/reject" style="display:inline;">
+                <input type="hidden" name="item_id" value="<%= item.id %>">
+                <button type="submit" style="background:#ff6b6b;">Отклонить</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </table>
+    <% } %>
+  </div>
+</body>
+</html>

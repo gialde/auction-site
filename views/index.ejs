@@ -12,10 +12,11 @@
       <h1 style="border: none; margin: 0;">Аукционы</h1>
       <div style="display: flex; gap: 10px; align-items: center;">
         <% if (user) { %>
+          <a href="/create-item"><button style="background:#4CAF50;">Создать лот</button></a>
           <a href="/profile"><button style="background:#2a2a45; color:#c9a96e;">Профиль</button></a>
           <a href="/favorites"><button style="background:#2a2a45; color:#c9a96e;">Избранное</button></a>
           <a href="/cart"><button style="background:#2a2a45; color:#c9a96e;">Корзина</button></a>
-          <span style="color: #c9a96e; margin: 0 10px;"><%= user.full_name %> (<%= user.role %>)</span>
+          <span style="color: #c9a96e; margin: 0 10px;"><%= user.full_name %></span>
           <a href="/logout"><button style="background:#ff6b6b; color:#fff;">Выйти</button></a>
         <% } else { %>
           <a href="/login"><button>Войти</button></a>
@@ -40,6 +41,7 @@
     <% if (user && user.role === 'admin') { %>
       <a href="/admin"><button style="background:#c9a96e; color:#1a1a2e;">Админ-панель</button></a>
     <% } %>
+    
 
     <!-- Лоты -->
     <h2>Лоты</h2>
@@ -50,7 +52,9 @@
         <% items.forEach(item => { %>
           <div style="background: #252540; border-radius: 12px; padding: 20px; border: 1px solid #3a3a55; display: flex; flex-direction: column; justify-content: space-between;">
             <div>
-              <h3 style="margin:0 0 10px; color: #e0e0e0;"><%= item.name %></h3>
+              <h3 style="margin:0 0 10px; color: #e0e0e0;">
+                <a href="/item/<%= item.id %>" style="color: #e0e0e0; text-decoration: none;"><%= item.name %></a>
+              </h3>
               <p style="color: #888; font-size:13px; margin-bottom: 10px;"><%= item.description || 'Нет описания' %></p>
               <p style="font-size: 18px; color: #c9a96e;"><strong><%= item.start_price %> руб.</strong></p>
               <p style="font-size:12px; color:#888;">Аукцион: <%= item.auction_name %> | Лот №<%= item.lot_number %></p>
