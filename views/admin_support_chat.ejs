@@ -25,24 +25,6 @@
     }
   </style>
 </head>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-  const socket = io();
-  socket.emit('join-support', '<%= chatUser.id %>');
-  socket.emit('join-admin-support');
-  
-  socket.on('new-message', (data) => {
-    const chatBox = document.getElementById('chatBox');
-    const isMine = data.sender_id === <%= user.id %>;
-    chatBox.innerHTML += `
-      <div class="msg ${isMine ? 'msg-mine' : 'msg-other'}">
-        <div><strong style="color:#c9a96e;">${data.sender_name}:</strong> ${data.message}</div>
-        <div class="msg-time">${new Date(data.created_at).toLocaleString('ru-RU')}</div>
-      </div>
-    `;
-    chatBox.scrollTop = chatBox.scrollHeight;
-  });
-</script>
 <body>
 <header class="header">
   <div class="header-inner">
@@ -79,4 +61,22 @@
   document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
 </script>
 </body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  socket.emit('join-support', '<%= chatUser.id %>');
+  socket.emit('join-admin-support');
+  
+  socket.on('new-message', (data) => {
+    const chatBox = document.getElementById('chatBox');
+    const isMine = data.sender_id === <%= user.id %>;
+    chatBox.innerHTML += `
+      <div class="msg ${isMine ? 'msg-mine' : 'msg-other'}">
+        <div><strong style="color:#c9a96e;">${data.sender_name}:</strong> ${data.message}</div>
+        <div class="msg-time">${new Date(data.created_at).toLocaleString('ru-RU')}</div>
+      </div>
+    `;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+</script>
 </html>
