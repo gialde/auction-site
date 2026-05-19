@@ -646,6 +646,47 @@ app.route('/admin/support/:userId')
     `, [req.session.user.id, req.params.userId, req.body.message]);
     res.redirect(`/admin/support/${req.params.userId}`);
   });
+// ---------- Страница пополнения через карту ----------
+app.get('/profile/topup/card', requireAuth, async (req, res) => {
+  const user = await pool.query('SELECT * FROM users WHERE id=$1', [req.session.user.id]);
+  res.render('topup', { user: user.rows[0] });
+});
+
+// ---------- Обработка пополнения (имитация) ----------
+app.post('/profile/topup/card', requireAuth, async (req, res) => {
+  const { card_number, card_expiry, card_cvv, amount } = req.body;
+  
+  // Простая валидация
+  const cardClean = card_number.replace(/\s/g, '');
+  if (cardClean.length !== 16 || isNaN(cardClean)) {
+    return res.send('<script>alert("Неверный номер карты!"); window.history.back();</script>');
+  }
+  if (!card_expiry.match(/^\d{2}\/\d{2}$/)) {
+    return res.send('<script>alert("Неверный срок действия!"); window.history.back();</script>');
+  }
+  if (card_cvv.length !== 3 || isNaN(card_cvv)) {
+    return res.send('<script>alert("Неверный CVV!"); window.history.back();</script>');
+  }
+  
+  const amountNum = parseInt(amount);
+  if (!amountNum || amountNum < 100 || amountNum > 50000) {
+    return res.send('<script>alert("Сумма должна быть от 100 до 50 000 ₽!"); window.history.back();</script>');
+  }
+  
+  // Имитация задержки "обработки платежа"
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  
+  // Зачисляем на баланс
+  await pool.query('UPDATE users SET balance = balance + $1 WHERE id = $2', [amountNum, req.session.user.id]);
+  req.session.user.balance += amountNum;
+  
+  res.send(`
+    <script>
+      alert("✅ Платёж на сумму ${amountNum} ₽ успешно выполнен!");
+      window.location.href = "/profile";
+    </script>
+  `);
+});
 // ---------- Старт ----------
 
 app.get('/privacy', (req, res) => res.render('privacy'));
