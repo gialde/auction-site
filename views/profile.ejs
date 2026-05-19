@@ -33,10 +33,7 @@
     <div style="border:1px solid #222; padding:20px; text-align:center;">
       <p style="color:#666;">Баланс</p>
       <p style="font-family:'Playfair Display',serif; font-size:42px; color:#c9a96e;"><%= profile.balance.toLocaleString() %> ₽</p>
-      <form method="post" action="/profile/topup" style="margin-top:15px; display:flex; gap:10px;">
-        <input type="number" name="amount" min="1" required placeholder="Сумма" style="margin:0;">
-        <button type="submit" style="white-space:nowrap;">Пополнить</button>
-      </form>
+      <a href="/profile/topup/card"><button style="width:100%;">💳 Пополнить с карты</button></a>
     </div>
   </div>
 
