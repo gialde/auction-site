@@ -23,19 +23,21 @@
 <div class="container-wide">
   <h1>Профиль</h1>
   
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:20px 0;">
     <div style="border:1px solid #222; padding:20px;">
-      <p style="color:#666;">ФИО</p>
-      <p style="font-size:18px;"><%= profile.full_name %></p>
+      <p style="color:#666;">Фамилия</p>
+      <p style="font-size:18px;"><%= profile.last_name || '—' %></p>
+      <p style="color:#666;margin-top:15px;">Имя</p>
+      <p style="font-size:18px;"><%= profile.first_name || '—' %></p>
+      <p style="color:#666;margin-top:15px;">Отчество</p>
+      <p style="font-size:18px;"><%= profile.middle_name || '—' %></p>
       <p style="color:#666;margin-top:15px;">Email</p>
       <p><%= profile.email %></p>
+      <p style="color:#666;margin-top:15px;">Паспорт</p>
+      <p><%= profile.passport || '—' %></p>
+      <p style="color:#666;margin-top:15px;">Телефон</p>
+      <p><%= profile.phone || '—' %></p>
+      <a href="/profile/edit"><button style="margin-top:15px;">✏️ Редактировать</button></a>
     </div>
-    <div style="border:1px solid #222; padding:20px; text-align:center;">
-      <p style="color:#666;">Баланс</p>
-      <p style="font-family:'Playfair Display',serif; font-size:42px; color:#c9a96e;"><%= profile.balance.toLocaleString() %> ₽</p>
-      <a href="/profile/topup/card"><button style="width:100%;">💳 Пополнить с карты</button></a>
-    </div>
-  </div>
 
   <h2>Мои ставки</h2>
   <% if (myBids.length === 0) { %><p style="color:#666;">Нет ставок.</p><% } else { %>
