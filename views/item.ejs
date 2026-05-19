@@ -76,5 +76,14 @@
 </div>
 
 <footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  socket.emit('join-item', '<%= item.id %>');
+  
+  socket.on('new-bid', (data) => {
+    location.reload();
+  });
+</script>
 </body>
 </html>
