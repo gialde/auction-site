@@ -641,7 +641,7 @@ app.route('/support')
     
     res.render('support', { messages: messages.rows });
   })
-  .post(requireAuth, async (req, res) => {
+.post(requireAuth, async (req, res) => {
     const admin = await pool.query("SELECT * FROM users WHERE role='admin' LIMIT 1");
     const adminId = admin.rows[0]?.id || 1;
     
@@ -650,9 +650,21 @@ app.route('/support')
       VALUES (NULL, $1, $2, $3)
     `, [req.session.user.id, adminId, req.body.message]);
     
+    req.io.to(`support-${req.session.user.id}`).emit('new-message', {
+      sender_id: req.session.user.id,
+      sender_name: req.session.user.full_name,
+      message: req.body.message,
+      created_at: new Date()
+    });
+    req.io.to('support-admin').emit('new-message', {
+      sender_id: req.session.user.id,
+      sender_name: req.session.user.full_name,
+      message: req.body.message,
+      created_at: new Date()
+    });
+    
     res.redirect('/support');
   });
-
 // Админ видит обращения
 app.get('/admin/support', requireAuth, requireRole('admin'), async (req, res) => {
   const users = await pool.query(`
@@ -676,11 +688,19 @@ app.route('/admin/support/:userId')
     const user = await pool.query('SELECT * FROM users WHERE id=$1', [req.params.userId]);
     res.render('admin_support_chat', { messages: messages.rows, chatUser: user.rows[0] });
   })
-  .post(requireAuth, requireRole('admin'), async (req, res) => {
+.post(requireAuth, requireRole('admin'), async (req, res) => {
     await pool.query(`
       INSERT INTO messages (deal_id, sender_id, receiver_id, message)
       VALUES (NULL, $1, $2, $3)
     `, [req.session.user.id, req.params.userId, req.body.message]);
+    
+    req.io.to(`support-${req.params.userId}`).emit('new-message', {
+      sender_id: req.session.user.id,
+      sender_name: req.session.user.full_name,
+      message: req.body.message,
+      created_at: new Date()
+    });
+    
     res.redirect(`/admin/support/${req.params.userId}`);
   });
 // ---------- Страница пополнения через карту ----------

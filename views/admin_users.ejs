@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,13 +25,13 @@
 
   <div style="overflow-x:auto;">
     <table>
-      <th>ID</th><th>Email</th><th>ФИО</th><th>Паспорт</th><th>Роль</th><th>Бан</th><th>Действия</th>
-      <td><%= u.passport || '—' %></td>
+      <tr><th>ID</th><th>Email</th><th>ФИО</th><th>Паспорт</th><th>Роль</th><th>Подтв.</th><th>Бан</th><th>Действия</th></tr>
       <% users.forEach(u => { %>
         <tr>
           <td><%= u.id %></td>
           <td><%= u.email %></td>
           <td><%= u.full_name %></td>
+          <td><%= u.passport || '—' %></td>
           <td><%= u.role %></td>
           <td><%= u.verified ? '✅' : '❌' %></td>
           <td><%= u.banned ? '🚫' : '✅' %></td>
@@ -64,3 +65,4 @@
 <footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
 </body>
 </html>
+```
