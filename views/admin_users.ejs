@@ -1,68 +1,86 @@
-```html
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AURUM — Пользователи</title>
+  <title>AURUM — Запрос 1</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<header class="header">
-  <div class="header-inner">
-    <a href="/" class="logo">AURUM</a>
-    <nav class="nav-links">
-      <a href="/">Главная</a>
-      <a href="/admin">Админ</a>
-      <a href="/logout" class="btn-outline">Выйти</a>
-    </nav>
-  </div>
-</header>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">AURUM</a>
+      <nav class="nav-links">
+        <a href="/">Главная</a>
+        <a href="/admin">Админ</a>
+        <a href="/logout" class="btn-outline">Выйти</a>
+      </nav>
+    </div>
+  </header>
 
-<div class="container-wide" style="overflow-x:auto;">
-  <h1>Управление пользователями</h1>
-  <% if (message) { %><p style="color:#c9a96e;"><%= message %></p><% } %>
-
-  <div style="overflow-x:auto;">
-    <table>
-      <tr><th>ID</th><th>Email</th><th>ФИО</th><th>Паспорт</th><th>Роль</th><th>Подтв.</th><th>Бан</th><th>Действия</th></tr>
-      <% users.forEach(u => { %>
-        <tr>
-          <td><%= u.id %></td>
-          <td><%= u.email %></td>
-          <td><%= u.full_name %></td>
-          <td><%= u.passport || '—' %></td>
-          <td><%= u.role %></td>
-          <td><%= u.verified ? '✅' : '❌' %></td>
-          <td><%= u.banned ? '🚫' : '✅' %></td>
-          <td>
-            <% if (u.id !== user.id) { %>
-              <% if (u.banned) { %>
-                <form method="post" action="/admin/users/unban" style="display:inline;">
-                  <input type="hidden" name="user_id" value="<%= u.id %>">
-                  <button type="submit" style="padding:6px 10px;font-size:10px;">Разбанить</button>
-                </form>
-              <% } else { %>
-                <form method="post" action="/admin/users/ban" style="display:inline;">
-                  <input type="hidden" name="user_id" value="<%= u.id %>">
-                  <button type="submit" style="padding:6px 10px;font-size:10px;">Забанить</button>
-                </form>
-              <% } %>
-              <form method="post" action="/admin/users/delete" style="display:inline;" onsubmit="return confirm('Удалить?')">
-                <input type="hidden" name="user_id" value="<%= u.id %>">
-                <button type="submit" style="padding:6px 10px;font-size:10px;border-color:#ff4444;color:#ff4444;">Удалить</button>
-              </form>
-            <% } else { %>
-              <em style="font-size:11px;">Это вы</em>
+  <div class="container-wide">
+    <h1>Предметы на заданную дату и аукцион</h1>
+    
+    <form method="POST" action="/query1" style="margin-bottom: 30px;">
+      <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="flex: 1;">
+          <label>Выберите дату:</label>
+          <select name="date" required>
+            <option value="" disabled selected>-- выберите дату --</option>
+            <% 
+              const uniqueDates = {};
+              auctions.forEach(a => {
+                const dateStr = new Date(a.date).toISOString().split('T')[0];
+                uniqueDates[dateStr] = new Date(a.date).toLocaleDateString('ru-RU');
+              });
+              for (const [iso, ru] of Object.entries(uniqueDates)) {
+            %>
+              <option value="<%= iso %>"><%= ru %></option>
             <% } %>
-          </td>
-        </tr>
-      <% }) %>
-    </table>
-  </div>
-</div>
+          </select>
+        </div>
+        <div style="flex: 2;">
+          <label>Выберите аукцион:</label>
+          <select name="auction_id" required>
+            <option value="" disabled selected>-- выберите --</option>
+            <% auctions.forEach(a => { %>
+              <option value="<%= a.id %>"><%= a.name %> (<%= new Date(a.date).toLocaleDateString('ru-RU') %>)</option>
+            <% }) %>
+          </select>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <button type="submit" style="margin-top: 0;">Показать</button>
+        </div>
+      </div>
+    </form>
 
-<footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
+    <% if (typeof items !== 'undefined') { %>
+      <h2>Результаты</h2>
+      <% if (items.length === 0) { %>
+        <p style="color:#666;">На этом аукционе нет лотов.</p>
+      <% } else { %>
+        <div style="overflow-x:auto;">
+          <table>
+            <tr><th>ID</th><th>Лот №</th><th>Название</th><th>Стартовая цена</th><th>Продавец</th></tr>
+            <% items.forEach(item => { %>
+              <tr>
+                <td><%= item.id %></td>
+                <td><%= item.lot_number %></td>
+                <td><%= item.name %></td>
+                <td style="color:#c9a96e;"><%= item.start_price %> ₽</td>
+                <td><%= item.creator_name %></td>
+              </tr>
+            <% }); %>
+          </table>
+        </div>
+      <% } %>
+    <% } %>
+    
+    <p style="margin-top: 20px;"><a href="/admin">← Назад в админ-панель</a></p>
+  </div>
+
+  <footer class="footer">
+    <p>© 2026 AURUM Auction House</p>
+  </footer>
 </body>
 </html>
-```
