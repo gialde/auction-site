@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Редактировать профиль</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <a href="/profile">Профиль</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <h1>Редактировать профиль</h1>
+  <% if (message) { %><p style="color:#c9a96e;"><%= message %></p><% } %>
+  <form method="post">
+    <label>Фамилия</label>
+    <input name="last_name" value="<%= profile.last_name || '' %>" required>
+    <label>Имя</label>
+    <input name="first_name" value="<%= profile.first_name || '' %>" required>
+    <label>Отчество</label>
+    <input name="middle_name" value="<%= profile.middle_name || '' %>" placeholder="При наличии">
+    <label>Email</label>
+    <input type="email" name="email" value="<%= profile.email %>" required>
+    <label>Паспорт</label>
+    <input name="passport" value="<%= profile.passport || '' %>" required>
+    <label>Телефон</label>
+    <input name="phone" value="<%= profile.phone || '' %>" placeholder="+7 (999) 123-45-67">
+    <label>Новый пароль (оставьте пустым, чтобы не менять)</label>
+    <input type="password" name="password" placeholder="Новый пароль">
+    <button type="submit">Сохранить</button>
+  </form>
+</div>
+
+<footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
+</body>
+</html>
