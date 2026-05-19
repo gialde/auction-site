@@ -24,7 +24,8 @@
 
   <div style="overflow-x:auto;">
     <table>
-      <tr><th>ID</th><th>Email</th><th>ФИО</th><th>Роль</th><th>Подтв.</th><th>Бан</th><th>Действия</th></tr>
+      <th>ID</th><th>Email</th><th>ФИО</th><th>Паспорт</th><th>Роль</th><th>Бан</th><th>Действия</th>
+      <td><%= u.passport || '—' %></td>
       <% users.forEach(u => { %>
         <tr>
           <td><%= u.id %></td>
