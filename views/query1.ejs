@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AURUM — Запрос 1</title>
+  <title>AURUM — Запрос 2</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -19,42 +19,47 @@
   </header>
 
   <div class="container-wide">
-    <h1>Предметы на заданном аукционе</h1>
+    <h1>Аукционы, где продавались предметы заданной специфики</h1>
     
-    <form method="POST" action="/query1" style="margin-bottom: 30px;">
-      <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
+    <form method="POST" action="/query2" style="margin-bottom: 30px;">
+      <div style="display: flex; gap: 15px; align-items: baseline; flex-wrap: wrap;">
         <div style="flex: 2;">
-          <label>Выберите аукцион:</label>
-          <select name="auction_id" required>
-            <option value="" disabled selected>-- выберите --</option>
-            <% auctions.forEach(a => { %>
-              <option value="<%= a.id %>"><%= a.name %> (<%= new Date(a.date).toLocaleDateString('ru-RU') %>)</option>
-            <% }) %>
+          <select name="specifics" required style="width: 100%;">
+            <option value="" disabled selected>-- Выберите специфику --</option>
+            <% if (specifics && specifics.length > 0) { %>
+              <% specifics.forEach(s => { %>
+                <option value="<%= s.specifics %>"><%= s.specifics %></option>
+              <% }) %>
+            <% } else { %>
+              <option disabled>Нет специфик в БД</option>
+            <% } %>
           </select>
         </div>
         <div>
-          <button type="submit">Показать</button>
+          <button type="submit">Искать</button>
         </div>
       </div>
     </form>
 
-    <% if (typeof items !== 'undefined') { %>
+    <% if (typeof auctions !== 'undefined') { %>
       <h2>Результаты</h2>
-      <% if (items.length === 0) { %>
-        <p style="color:#666;">На этом аукционе нет лотов.</p>
+      <% if (auctions.length === 0) { %>
+        <p style="color:#ff4444;">По этой специфике нет проданных предметов.</p>
       <% } else { %>
         <div style="overflow-x:auto;">
-          <table>
-            <tr><th>ID</th><th>Лот №</th><th>Название</th><th>Стартовая цена</th><th>Продавец</th></tr>
-            <% items.forEach(item => { %>
-              <tr>
-                <td><%= item.id %></td>
-                <td><%= item.lot_number %></td>
-                <td><%= item.name %></td>
-                <td style="color:#c9a96e;"><%= item.start_price %> ₽</td>
-                <td><%= item.creator_name %></td>
-              </tr>
-            <% }); %>
+          <table style="width:100%;">
+            <thead>
+              <tr><th>Название аукциона</th><th>Место</th><th>Дата</th></tr>
+            </thead>
+            <tbody>
+              <% auctions.forEach(a => { %>
+                <tr>
+                  <td style="color:#c9a96e;"><%= a.name %></td>
+                  <td><%= a.place %></td>
+                  <td><%= new Date(a.date).toLocaleDateString('ru-RU') %></td>
+                </tr>
+              <% }); %>
+            </tbody>
           </table>
         </div>
       <% } %>

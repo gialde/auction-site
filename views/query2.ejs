@@ -1,41 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Аукционы по специфике</title>
+  <title>AURUM — Запрос 2</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="container">
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">AURUM</a>
+      <nav class="nav-links">
+        <a href="/">Главная</a>
+        <a href="/admin">Админ</a>
+        <a href="/logout" class="btn-outline">Выйти</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container-wide">
     <h1>Аукционы, где продавались предметы заданной специфики</h1>
-    <a href="/admin">← В админ-панель</a>
-    <form method="post">
-  <label>Выберите специфику:</label><br>
-  <select name="specifics" required style="width:100%; margin-bottom:10px;">
-    <option value=""disabled selected>-- выберите --</option>
-    <% specifics.forEach(s => { %>
-      <option value="<%= s.specifics %>"><%= s.specifics %></option>
-    <% }) %>
-  </select><br>
-  <button type="submit">Искать</button>
-</form>
+    
+    <form method="POST" action="/query2" style="margin-bottom: 30px;">
+      <div style="display: flex; gap: 15px; align-items: baseline; flex-wrap: wrap;">
+        <div style="flex: 2;">
+          <select name="specifics" required style="width: 100%;">
+            <option value="" disabled selected>-- Выберите специфику --</option>
+            <% if (specifics && specifics.length > 0) { %>
+              <% specifics.forEach(s => { %>
+                <option value="<%= s.specifics %>"><%= s.specifics %></option>
+              <% }) %>
+            <% } else { %>
+              <option disabled>Нет специфик в БД</option>
+            <% } %>
+          </select>
+        </div>
+        <div>
+          <button type="submit">Искать</button>
+        </div>
+      </div>
+    </form>
+
     <% if (typeof auctions !== 'undefined') { %>
       <h2>Результаты</h2>
       <% if (auctions.length === 0) { %>
-        <p>Ничего не найдено.</p>
+        <p style="color:#ff4444;">По этой специфике нет проданных предметов.</p>
       <% } else { %>
-        <table>
-          <tr><th>Название</th><th>Место</th><th>Дата</th></tr>
-          <% auctions.forEach(a => { %>
-            <tr>
-              <td><%= a.name %></td>
-              <td><%= a.place %></td>
-              <td><%= new Date(a.date).toLocaleDateString('ru-RU') %></td>
-            </tr>
-          <% }) %>
-        </table>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;">
+            <thead>
+              <tr><th>Название аукциона</th><th>Место</th><th>Дата</th></tr>
+            </thead>
+            <tbody>
+              <% auctions.forEach(a => { %>
+                <tr>
+                  <td style="color:#c9a96e;"><%= a.name %></td>
+                  <td><%= a.place %></td>
+                  <td><%= new Date(a.date).toLocaleDateString('ru-RU') %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
       <% } %>
     <% } %>
+    
+    <p style="margin-top: 20px;"><a href="/admin">← Назад в админ-панель</a></p>
   </div>
+
+  <footer class="footer">
+    <p>© 2026 AURUM Auction House</p>
+  </footer>
 </body>
 </html>

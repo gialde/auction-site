@@ -1,22 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Аукцион-рекордсмен</title>
+  <title>AURUM — Запрос 4</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="container">
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">AURUM</a>
+      <nav class="nav-links">
+        <a href="/">Главная</a>
+        <a href="/admin">Админ</a>
+        <a href="/logout" class="btn-outline">Выйти</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container-wide">
     <h1>Аукцион, где продано больше всего предметов</h1>
-    <a href="/admin">← В админ-панель</a>
+    
     <% if (auction) { %>
-      <p><strong>Название:</strong> <%= auction.name %></p>
-      <p><strong>Место:</strong> <%= auction.place %></p>
-      <p><strong>Дата:</strong> <%= new Date(auction.date).toLocaleDateString('ru-RU') %></p>
-      <p><strong>Продано лотов:</strong> <%= auction.sold %></p>
+      <div style="background: #0a0a0a; border: 1px solid #222; padding: 30px; margin: 20px 0;">
+        <p style="color:#666;">Название аукциона</p>
+        <p style="font-size: 24px; margin-bottom: 20px;"><%= auction.name %></p>
+        
+        <p style="color:#666;">Место проведения</p>
+        <p style="font-size: 18px;"><%= auction.place %></p>
+        
+        <p style="color:#666; margin-top: 15px;">Дата</p>
+        <p style="font-size: 18px;"><%= new Date(auction.date).toLocaleDateString('ru-RU') %></p>
+        
+        <p style="color:#666; margin-top: 15px;">Продано лотов</p>
+        <p style="font-size: 28px; color: #c9a96e; font-family:'Playfair Display',serif;"><%= auction.sold %> шт.</p>
+      </div>
     <% } else { %>
-      <p>Нет данных о продажах.</p>
+      <p style="color:#666;">Нет данных о продажах.</p>
     <% } %>
+    
+    <p style="margin-top: 20px;"><a href="/admin">← Назад в админ-панель</a></p>
   </div>
+
+  <footer class="footer">
+    <p>© 2026 AURUM Auction House</p>
+  </footer>
 </body>
 </html>

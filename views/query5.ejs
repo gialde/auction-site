@@ -1,21 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Покупатель самого дорогого лота</title>
+  <title>AURUM — Запрос 5</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="container">
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">AURUM</a>
+      <nav class="nav-links">
+        <a href="/">Главная</a>
+        <a href="/admin">Админ</a>
+        <a href="/logout" class="btn-outline">Выйти</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container-wide">
     <h1>Покупатель самого дорогого лота</h1>
-    <a href="/admin">← В админ-панель</a>
+    
     <% if (buyer) { %>
-      <p><strong>ФИО:</strong> <%= buyer.full_name %></p>
-      <p><strong>Паспорт:</strong> <%= buyer.passport %></p>
-      <p><strong>Цена лота:</strong> <%= buyer.final_price %> руб.</p>
+      <div style="background: #0a0a0a; border: 1px solid #222; padding: 30px; margin: 20px 0;">
+        <p style="color:#666;">ФИО покупателя</p>
+        <p style="font-size: 24px; margin-bottom: 20px;"><%= buyer.full_name %></p>
+        
+        <p style="color:#666;">Email</p>
+        <p style="font-size: 18px;"><%= buyer.email %></p>
+        
+        <p style="color:#666; margin-top: 15px;">Цена лота</p>
+        <p style="font-size: 28px; color: #c9a96e; font-family:'Playfair Display',serif;"><%= buyer.final_price %> ₽</p>
+      </div>
     <% } else { %>
-      <p>Нет данных о продажах.</p>
+      <p style="color:#666;">Нет данных о продажах.</p>
     <% } %>
+    
+    <p style="margin-top: 20px;"><a href="/admin">← Назад в админ-панель</a></p>
   </div>
+
+  <footer class="footer">
+    <p>© 2026 AURUM Auction House</p>
+  </footer>
 </body>
 </html>
