@@ -22,8 +22,8 @@
     <h1>Предметы на заданную дату и аукцион</h1>
     
     <form method="POST" action="/query1" style="margin-bottom: 30px;">
-      <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end;">
-        <div style="flex: 1;">
+      <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+        <div>
           <label>Выберите дату:</label>
           <select name="date" required>
             <option value="" disabled selected>-- выберите дату --</option>
@@ -39,18 +39,16 @@
             <% } %>
           </select>
         </div>
-        <div style="flex: 2;">
+        <div>
           <label>Выберите аукцион:</label>
           <select name="auction_id" required>
             <option value="" disabled selected>-- выберите --</option>
             <% auctions.forEach(a => { %>
-              <option value="<%= a.id %>" data-date="<%= new Date(a.date).toISOString().split('T')[0] %>">
-                <%= a.name %> (<%= new Date(a.date).toLocaleDateString('ru-RU') %>)
-              </option>
+              <option value="<%= a.id %>"><%= a.name %> (<%= new Date(a.date).toLocaleDateString('ru-RU') %>)</option>
             <% }) %>
           </select>
         </div>
-        <div>
+        <div style="align-self: center;">
           <button type="submit">Показать</button>
         </div>
       </div>
