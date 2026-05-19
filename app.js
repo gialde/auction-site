@@ -389,6 +389,7 @@ app.post('/item/:id/bid', requireAuth, async (req, res) => {
   }
   
   await pool.query('INSERT INTO bids (item_id, user_id, amount) VALUES ($1,$2,$3)', [itemId, userId, amount]);
+  req.io.to(`item-${itemId}`).emit('new-bid', { amount });
   res.redirect(`/item/${itemId}`);
 });
 // ---------- Завершить аукцион (админ) ----------
@@ -613,6 +614,12 @@ app.route('/chat/:dealId')
       INSERT INTO messages (deal_id, sender_id, receiver_id, message)
       VALUES ($1,$2,$3,$4)
     `, [req.params.dealId, req.session.user.id, partnerId, req.body.message]);
+
+        req.io.to(`chat-${req.params.dealId}`).emit('new-message', {
+      sender_id: req.session.user.id,
+      message: req.body.message,
+      created_at: new Date()
+    });
     
     res.redirect(`/chat/${req.params.dealId}`);
   });
