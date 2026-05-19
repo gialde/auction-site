@@ -70,6 +70,9 @@ app.route('/register')
   })
   .post(async (req, res) => {
     const { email, password, full_name, role } = req.body;
+    if (password !== req.body.password_confirm) {
+      return res.render('register', { error: 'Пароли не совпадают!', step: 1 });
+    }
     
     // Проверяем, существует ли уже пользователь
     const exist = await pool.query('SELECT * FROM users WHERE email=$1', [email]);
