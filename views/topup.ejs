@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Пополнение</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .card-wrapper {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-radius: 16px; padding: 30px; margin: 20px 0;
+      border: 1px solid #333; max-width: 450px;
+    }
+    .card-input {
+      font-size: 20px !important; letter-spacing: 3px !important;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <a href="/profile">Профиль</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <h1>Пополнение баланса</h1>
+  <p style="color:#666;">Текущий баланс: <strong style="color:#c9a96e;"><%= user.balance.toLocaleString() %> ₽</strong></p>
+
+  <div class="card-wrapper">
+    <p style="color:#666; margin-bottom:15px;">💳 Банковская карта</p>
+    <form method="post" action="/profile/topup/card">
+      <label>Номер карты</label>
+      <input type="text" name="card_number" class="card-input" placeholder="0000 0000 0000 0000" maxlength="19" required oninput="formatCard(this)">
+      
+      <div style="display:flex; gap:15px;">
+        <div style="flex:1;">
+          <label>Срок</label>
+          <input type="text" name="card_expiry" placeholder="ММ/ГГ" maxlength="5" required style="text-align:center;">
+        </div>
+        <div style="flex:1;">
+          <label>CVV</label>
+          <input type="text" name="card_cvv" placeholder="***" maxlength="3" required style="text-align:center;">
+        </div>
+      </div>
+      
+      <label style="margin-top:15px;">Сумма (₽)</label>
+      <input type="number" name="amount" min="100" max="50000" required placeholder="От 100 до 50 000 ₽">
+      
+      <button type="submit" style="width:100%; margin-top:15px;">Оплатить</button>
+    </form>
+    <p style="color:#555; font-size:11px; margin-top:10px; text-align:center;">
+      🔒 Данные не сохраняются. Это учебный проект.
+    </p>
+  </div>
+
+  <p style="text-align:center;"><a href="/profile">← Вернуться в профиль</a></p>
+</div>
+
+<footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
+
+<script>
+function formatCard(input) {
+  let val = input.value.replace(/\s/g, '').replace(/[^\d]/g, '');
+  if (val.length > 16) val = val.slice(0, 16);
+  let formatted = val.match(/.{1,4}/g);
+  input.value = formatted ? formatted.join(' ') : val;
+}
+</script>
+</body>
+</html>
