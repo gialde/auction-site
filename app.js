@@ -717,6 +717,33 @@ app.post('/profile/topup/card', requireAuth, async (req, res) => {
     </script>
   `);
 });
+// ---------- Редактирование профиля ----------
+app.route('/profile/edit')
+  .get(requireAuth, async (req, res) => {
+    const user = await pool.query('SELECT * FROM users WHERE id=$1', [req.session.user.id]);
+    res.render('edit_profile', { profile: user.rows[0], message: null });
+  })
+  .post(requireAuth, async (req, res) => {
+    const { first_name, last_name, middle_name, email, passport, phone, password } = req.body;
+    const full_name = [last_name, first_name, middle_name].filter(Boolean).join(' ');
+    
+    if (password) {
+      const hash = await bcrypt.hash(password, 10);
+      await pool.query(
+        `UPDATE users SET first_name=$1, last_name=$2, middle_name=$3, full_name=$4, email=$5, passport=$6, phone=$7, password=$8 WHERE id=$9`,
+        [first_name, last_name, middle_name || null, full_name, email, passport, phone || null, hash, req.session.user.id]
+      );
+    } else {
+      await pool.query(
+        `UPDATE users SET first_name=$1, last_name=$2, middle_name=$3, full_name=$4, email=$5, passport=$6, phone=$7 WHERE id=$8`,
+        [first_name, last_name, middle_name || null, full_name, email, passport, phone || null, req.session.user.id]
+      );
+    }
+    
+    req.session.user.full_name = full_name;
+    req.session.user.email = email;
+    res.redirect('/profile');
+  });
 // ---------- Старт ----------
 
 app.get('/privacy', (req, res) => res.render('privacy'));
