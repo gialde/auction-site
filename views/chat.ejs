@@ -25,6 +25,23 @@
     }
   </style>
 </head>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  socket.emit('join-chat', '<%= deal.id %>');
+  
+  socket.on('new-message', (data) => {
+    const chatBox = document.getElementById('chatBox');
+    const isMine = data.sender_id === <%= user.id %>;
+    chatBox.innerHTML += `
+      <div class="msg ${isMine ? 'msg-mine' : 'msg-other'}">
+        <div>${data.message}</div>
+        <div class="msg-time">${new Date(data.created_at).toLocaleString('ru-RU')}</div>
+      </div>
+    `;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+</script>
 <body>
 <header class="header">
   <div class="header-inner">
