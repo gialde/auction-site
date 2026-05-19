@@ -1,28 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Вход</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Вход</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="container" style="max-width: 450px;">
-    <h1>Вход</h1>
-    <% if (msg === 'verified') { %>
-        <p style="color: #c9a96e;">Email подтверждён! Войдите.</p>
-    <% } %>
-    <% if (error) { %>
-      <p style="color: #ff6b6b;"><%= error %></p>
-    <% } %>
-    <form method="post">
-      <label>Email:</label>
-      <input type="email" name="email" required>
-      <label>Пароль:</label>
-      <input type="password" name="password" required>
-      <button type="submit">Войти</button>
-    </form>
-    <p>Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
-    <a href="/">← На главную</a>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <a href="/register" class="btn-outline">Регистрация</a>
+    </nav>
   </div>
+</header>
+
+<div class="container">
+  <h1>Вход</h1>
+  <% if (msg === 'verified') { %>
+    <p style="color:#c9a96e;">Email подтверждён! Войдите.</p>
+  <% } %>
+  <% if (error) { %>
+    <p style="color:#ff4444;"><%= error %></p>
+  <% } %>
+  <form method="post">
+    <label>Email</label>
+    <input type="email" name="email" required>
+    <label>Пароль</label>
+    <input type="password" name="password" required>
+    <button type="submit">Войти</button>
+  </form>
+  <p style="margin-top:20px;">Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+</div>
+
+<footer class="footer">
+  <p>© 2026 AURUM Auction House</p>
+</footer>
 </body>
 </html>

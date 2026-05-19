@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Обращения</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <a href="/admin">Админ</a>
+      <a href="/logout" class="btn-outline">Выйти</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container-wide">
+  <h1>Обращения в поддержку</h1>
+  
+  <% if (users.length === 0) { %>
+    <p style="color:#666;">Нет обращений.</p>
+  <% } else { %>
+    <table>
+      <tr><th>Пользователь</th><th>Email</th><th>Чат</th></tr>
+      <% users.forEach(u => { %>
+        <tr>
+          <td><%= u.full_name %></td>
+          <td><%= u.email %></td>
+          <td><a href="/admin/support/<%= u.id %>"><button style="padding:8px 20px;font-size:11px;">Открыть чат</button></a></td>
+        </tr>
+      <% }) %>
+    </table>
+  <% } %>
+</div>
+
+<footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
+</body>
+</html>

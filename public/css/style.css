@@ -1,297 +1,228 @@
-/* ===== БАЗА ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ===== LAMBORGHINI INSPIRED ===== */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: #0a0a0f;
-  background-image: 
-    radial-gradient(ellipse at 20% 50%, #1a1a3e 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, #2a1a1a 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, #1a2a1a 0%, transparent 50%);
+  font-family: 'Montserrat', sans-serif;
+  background: #0a0a0a;
+  color: #fff;
   min-height: 100vh;
-  color: #e0e0e0;
-  padding: 20px;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ===== СКРОЛЛБАР ===== */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #111;
-}
-::-webkit-scrollbar-thumb {
-  background: #c9a96e;
-  border-radius: 4px;
-}
-
-/* ===== КОНТЕЙНЕР ===== */
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  background: rgba(20, 20, 35, 0.95);
+/* ===== HEADER ===== */
+.header {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  background: rgba(10,10,10,0.95);
   backdrop-filter: blur(20px);
-  padding: 35px 40px;
-  border-radius: 20px;
-  box-shadow: 
-    0 0 40px rgba(201, 169, 110, 0.08),
-    0 0 0 1px rgba(201, 169, 110, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(201, 169, 110, 0.2);
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 0 40px;
+}
+.header-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  height: 80px;
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; color: #c9a96e; letter-spacing: 2px;
+}
+.nav-links {
+  display: flex; gap: 30px; align-items: center;
+}
+.nav-links a {
+  color: #999; text-transform: uppercase; font-size: 12px;
+  letter-spacing: 2px; font-weight: 500; transition: color 0.3s;
+}
+.nav-links a:hover { color: #c9a96e; text-decoration: none; }
+.btn-outline {
+  border: 1px solid #c9a96e; color: #c9a96e !important;
+  padding: 10px 24px !important; transition: all 0.3s;
+}
+.btn-outline:hover { background: #c9a96e; color: #0a0a0a !important; }
+.btn-filled {
+  background: #c9a96e; color: #0a0a0a !important;
+  padding: 10px 24px !important; font-weight: 600;
 }
 
-/* ===== ЗАГОЛОВКИ ===== */
-h1 {
-  color: #c9a96e;
-  margin-bottom: 25px;
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  border-bottom: 2px solid rgba(201, 169, 110, 0.3);
-  padding-bottom: 15px;
-  text-shadow: 0 0 30px rgba(201, 169, 110, 0.2);
+/* ===== HERO ===== */
+.hero {
+  margin-top: 80px; padding: 120px 40px 80px; text-align: center;
+  background: radial-gradient(ellipse at center, rgba(201,169,110,0.05) 0%, transparent 70%);
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 72px; font-weight: 900; color: #fff;
+  letter-spacing: 3px; margin-bottom: 20px; text-transform: uppercase; border: none;
+}
+.hero p {
+  font-size: 18px; color: #999; letter-spacing: 1px; margin-bottom: 40px;
 }
 
-h2 {
-  color: #d4b87a;
-  margin: 25px 0 15px;
-  font-size: 22px;
-  font-weight: 600;
+/* ===== MAIN ===== */
+.main-container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+.section-title {
+  font-family: 'Playfair Display', serif; font-size: 36px; color: #fff;
+  margin: 60px 0 30px; text-align: center; letter-spacing: 2px;
 }
 
-h3 {
-  color: #c9a96e;
-  margin: 15px 0 10px;
-  font-size: 18px;
-  font-weight: 500;
+/* ===== GRID ===== */
+.lots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 30px; margin: 40px 0;
+}
+.lot-card {
+  background: #111; border: 1px solid #222; overflow: hidden;
+  transition: all 0.4s ease; position: relative;
+}
+.lot-card:hover {
+  border-color: #c9a96e; transform: translateY(-5px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+.lot-card-image {
+  height: 240px; background: #1a1a1a;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px; color: #333;
+}
+.lot-card-body { padding: 25px; }
+.lot-card h3 { font-size: 20px; font-weight: 600; margin-bottom: 10px; color: #fff; }
+.lot-card .price { font-family: 'Playfair Display', serif; font-size: 28px; color: #c9a96e; margin: 10px 0; }
+.lot-card .meta { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+.lot-card .actions { display: flex; gap: 10px; margin-top: 20px; }
+.lot-card .actions button { flex: 1; padding: 12px; font-size: 11px; }
+
+/* ===== CONTAINER ===== */
+.container {
+  max-width: 600px; margin: 120px auto 60px;
+  background: #111; padding: 50px; border: 1px solid #222;
+}
+.container-wide {
+  max-width: 1200px; margin: 120px auto 60px;
+  background: #111; padding: 50px; border: 1px solid #222;
 }
 
-/* ===== ССЫЛКИ ===== */
-a {
-  color: #c9a96e;
-  text-decoration: none;
-  transition: color 0.3s;
+/* ===== FOOTER ===== */
+.footer {
+  border-top: 1px solid #222; padding: 40px;
+  text-align: center; margin-top: 80px;
 }
-a:hover {
-  color: #e0c78e;
-}
+.footer p { color: #555; font-size: 13px; letter-spacing: 1px; }
 
-/* ===== НАВИГАЦИЯ ===== */
-nav a {
-  display: inline-block;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(201, 169, 110, 0.2);
-  color: #e0e0e0;
-  text-decoration: none;
-  padding: 12px 22px;
-  margin: 5px;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-nav a:hover {
-  background: rgba(201, 169, 110, 0.15);
-  border-color: #c9a96e;
-  color: #c9a96e;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(201, 169, 110, 0.15);
-}
-
-/* ===== ФОРМЫ ===== */
-form {
-  margin: 15px 0;
-}
-
-label {
-  display: block;
-  margin-bottom: 6px;
-  color: #aaa;
-  font-weight: 600;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
+/* ===== FORM ELEMENTS ===== */
 input, select, textarea {
-  width: 100%;
-  padding: 12px 16px;
-  margin-bottom: 15px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 10px;
-  color: #e0e0e0;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  font-family: inherit;
+  width: 100%; padding: 16px; margin-bottom: 20px;
+  background: #0a0a0a; border: 1px solid #333; color: #fff;
+  font-family: 'Montserrat', sans-serif; font-size: 14px; transition: border 0.3s;
 }
-
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #c9a96e;
-  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
-  background: rgba(255,255,255,0.05);
+input:focus, select:focus, textarea:focus { outline: none; border-color: #c9a96e; }
+label {
+  display: block; margin-bottom: 8px; color: #666;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
 }
-
-select {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c9a96e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  padding-right: 40px;
-}
-
-textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
-/* ===== КНОПКИ ===== */
 button {
-  background: #c9a96e;
-  color: #0a0a0f;
-  border: none;
-  padding: 12px 28px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  font-family: inherit;
+  background: transparent; border: 1px solid #c9a96e; color: #c9a96e;
+  padding: 14px 30px; cursor: pointer; text-transform: uppercase;
+  letter-spacing: 2px; font-size: 12px; font-weight: 600;
+  transition: all 0.3s; font-family: 'Montserrat', sans-serif;
 }
+button:hover { background: #c9a96e; color: #0a0a0a; }
 
-button:hover {
-  background: #d4b87a;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(201, 169, 110, 0.3);
-}
-
-button:active {
-  transform: translateY(0);
-}
-
-/* ===== ТАБЛИЦЫ ===== */
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin: 15px 0;
-  background: rgba(255,255,255,0.02);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.05);
-}
-
+/* ===== TABLE ===== */
+table { width: 100%; border-collapse: collapse; }
 th {
-  background: rgba(201, 169, 110, 0.15);
-  color: #c9a96e;
-  padding: 14px 16px;
-  text-align: left;
-  font-weight: 700;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-bottom: 1px solid rgba(201, 169, 110, 0.3);
+  text-align: left; padding: 16px; color: #666; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #222;
 }
+td { padding: 16px; border-bottom: 1px solid #1a1a1a; color: #ccc; }
+tr:hover td { background: #0f0f0f; }
 
-td {
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-  color: #ccc;
-  font-size: 14px;
-}
+a { color: #c9a96e; text-decoration: none; }
+a:hover { color: #fff; }
 
-tr:last-child td {
-  border-bottom: none;
-}
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb { background: #333; }
 
-tr:hover td {
-  background: rgba(201, 169, 110, 0.03);
-}
-
-/* ===== КАРТОЧКИ ЛОТОВ ===== */
-.item-card {
-  background: rgba(255,255,255,0.02);
-  border-radius: 16px;
-  padding: 24px;
-  border: 1px solid rgba(255,255,255,0.06);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.item-card:hover {
-  border-color: rgba(201, 169, 110, 0.3);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-  transform: translateY(-2px);
-}
-
-.item-card h3 {
-  color: #e0e0e0;
-  font-size: 16px;
-}
-
-.item-card .price {
-  font-size: 22px;
-  font-weight: 700;
-  color: #c9a96e;
-}
-
-/* ===== УВЕДОМЛЕНИЯ ===== */
-.message-success {
-  color: #4CAF50;
-  font-weight: bold;
-  padding: 12px;
-  background: rgba(76, 175, 80, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(76, 175, 80, 0.3);
-}
-
-.message-error {
-  color: #ff6b6b;
-  font-weight: bold;
-  padding: 12px;
-  background: rgba(255, 107, 107, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 107, 107, 0.3);
-}
-
-/* ===== ПРОЧЕЕ ===== */
-p {
-  margin: 10px 0;
-  line-height: 1.7;
-}
-
-small {
-  color: #777;
-  font-size: 12px;
-}
-
-em {
-  color: #ff6b6b;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid rgba(255,255,255,0.05);
-  margin: 20px 0;
-}
-
-/* ===== АДАПТИВ ===== */
+/* ===== АДАПТАЦИЯ ===== */
 @media (max-width: 768px) {
-  .container {
-    padding: 20px;
-    margin: 10px;
-    border-radius: 14px;
+  body { padding: 0 !important; overflow-x: hidden !important; }
+
+  .header { padding: 0 8px !important; }
+  .header-inner {
+    height: auto !important; flex-wrap: wrap !important; justify-content: center !important;
+    gap: 4px !important; padding: 8px 0 !important;
   }
-  h1 {
-    font-size: 24px;
+  .logo { font-size: 26px !important; width: 100% !important; text-align: center !important; margin-bottom: 8px !important; }
+  .nav-links { gap: 8px !important; flex-wrap: wrap !important; justify-content: center !important; }
+  .nav-links a { font-size: 12px !important; letter-spacing: 1px !important; padding: 8px 12px !important; }
+  .btn-outline, .btn-filled { padding: 8px 14px !important; }
+
+  .hero { margin-top: 160px !important; padding: 30px 10px !important; }
+  .hero h1 { font-size: 24px !important; letter-spacing: 1px !important; }
+  .hero p { font-size: 12px !important; }
+  .hero form { flex-direction: column !important; gap: 8px !important; }
+  .hero form input,
+  .hero form select,
+  .hero form button { width: 100% !important; }
+
+  .main-container { padding: 0 10px !important; }
+  .section-title { font-size: 20px !important; margin: 30px 0 15px !important; }
+
+  .lots-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .lot-card-image { height: 140px !important; font-size: 24px !important; }
+  .lot-card-body { padding: 12px !important; }
+  .lot-card h3 { font-size: 14px !important; }
+  .lot-card .price { font-size: 18px !important; }
+  .lot-card .actions { flex-direction: column !important; }
+  .lot-card .actions button { width: 100% !important; }
+
+  /* ВСЕ контейнеры */
+  .container, .container-wide {
+    margin: 100px 6px 20px !important; 
+    padding: 16px 10px !important;
+    max-width: 100% !important;
+    width: auto !important;
   }
+
+  /* Таблицы с горизонтальной прокруткой */
+  table {
+    display: block !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    font-size: 10px !important;
+  }
+  th, td { padding: 6px 4px !important; font-size: 9px !important; white-space: nowrap !important; }
+
+  /* Грид в профиле */
+  div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  input, select, textarea { padding: 10px !important; font-size: 16px !important; max-width: 100% !important; }
+  button { width: 100% !important; padding: 12px !important; font-size: 11px !important; white-space: normal !important; }
+
+  .footer { padding: 16px 10px !important; }
+
+  .chat-box { height: 250px !important; }
+  .msg { max-width: 90% !important; font-size: 12px !important; }
+
+  /* Формы с flex */
+  form[style*="display:flex"] {
+    flex-direction: column !important;
+  }
+  form[style*="display:flex"] input,
+  form[style*="display:flex"] select,
+  form[style*="display:flex"] button {
+    width: 100% !important;
+  }
+}
+@media (max-width: 480px) {
+  .hero h1 { font-size: 22px; }
+  .nav-links { gap: 3px; }
+  .nav-links a { font-size: 8px; padding: 3px 6px !important; }
+  .logo { font-size: 18px; }
 }

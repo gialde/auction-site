@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Создать лот</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Выставить лот</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="container" style="max-width: 500px;">
-    <h1>📦 Создать лот</h1>
-    <a href="/">← На главную</a>
-    <% if (message) { %>
-      <p style="color: #c9a96e;"><%= message %></p>
-    <% } %>
-    <% if (error) { %>
-      <p style="color: #ff6b6b;"><%= error %></p>
-    <% } %>
-    <form method="post">
-      <label>Аукцион:</label>
-      <select name="auction_id" required>
-        <option value="">-- выберите --</option>
-        <% auctions.forEach(a => { %>
-          <option value="<%= a.id %>"><%= a.name %> (<%= new Date(a.date).toLocaleDateString('ru-RU') %>)</option>
-        <% }) %>
-      </select>
-      <label>Название лота:</label>
-      <input name="name" required>
-      <label>Описание:</label>
-      <textarea name="description" rows="3"></textarea>
-      <label>Стартовая цена (руб.):</label>
-      <input type="number" name="start_price" min="1" required>
-      <button type="submit">Отправить на модерацию</button>
-    </form>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <a href="/profile">Профиль</a>
+    </nav>
   </div>
+</header>
+
+<div class="container">
+  <h1>Выставить лот</h1>
+  <% if (message) { %><p style="color:#c9a96e;"><%= message %></p><% } %>
+  <form method="post">
+    <label>Аукцион</label>
+    <select name="auction_id" required>
+      <option value="">-- выберите --</option>
+      <% auctions.forEach(a => { %>
+        <option value="<%= a.id %>"><%= a.name %> (<%= new Date(a.date).toLocaleDateString('ru-RU') %>)</option>
+      <% }) %>
+    </select>
+    <label>Название</label>
+    <input name="name" required>
+    <label>Описание</label>
+    <textarea name="description" rows="3"></textarea>
+    <label>Стартовая цена (₽)</label>
+    <input type="number" name="start_price" min="1" required>
+    <button type="submit">Отправить на модерацию</button>
+  </form>
+</div>
+
+<footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
 </body>
 </html>

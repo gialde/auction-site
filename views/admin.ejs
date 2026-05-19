@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Админ-панель</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Админ</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="container" style="max-width: 500px;">
-    <h1>⚙️ Админ-панель</h1>
-    <a href="/">← На главную</a>
-    <div style="display: flex; flex-direction: column; gap: 10px; margin: 20px 0;">
-      <a href="/add-item"><button style="width:100%;">📦 Управление лотами</button></a>
-      <a href="/admin/moderate"><button style="width:100%;">📋 Модерация лотов</button></a>
-      <a href="/admin/auctions/add"><button style="width:100%;">📅 Добавить аукцион</button></a>
-      <a href="/admin/users"><button style="width:100%;">👥 Управление пользователями</button></a>
-      <a href="/query1"><button style="width:100%; background:#2a2a45; color:#c9a96e;">📋 Запрос 1: Предметы на аукционе</button></a>
-      <a href="/query2"><button style="width:100%; background:#2a2a45; color:#c9a96e;">📋 Запрос 2: Аукционы по специфике</button></a>
-      <a href="/query3"><button style="width:100%; background:#2a2a45; color:#c9a96e;">📋 Запрос 3: Максимальная разница цен</button></a>
-      <a href="/query4"><button style="width:100%; background:#2a2a45; color:#c9a96e;">📋 Запрос 4: Аукцион-рекордсмен</button></a>
-      <a href="/query5"><button style="width:100%; background:#2a2a45; color:#c9a96e;">📋 Запрос 5: Покупатель дорогого лота</button></a>
-      <a href="/query6"><button style="width:100%; background:#2a2a45; color:#c9a96e;">📋 Запрос 6: Продавец дорогого лота</button></a>
-    </div>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <a href="/logout" class="btn-outline">Выйти</a>
+    </nav>
   </div>
+</header>
+
+<div class="container">
+  <h1>Админ-панель</h1>
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <a href="/admin/items"><button style="width:100%;">Управление лотами</button></a>
+    <a href="/admin/moderate"><button style="width:100%;">Модерация лотов</button></a>
+    <a href="/admin/auctions"><button style="width:100%;">Управление аукционами</button></a>
+    <a href="/admin/users"><button style="width:100%;">Пользователи</button></a>
+    <a href="/admin/support"><button style="width:100%;">Поддержка</button></a>
+    <a href="/query1"><button style="width:100%;">Запрос 1: Предметы на аукционе</button></a>
+    <a href="/query2"><button style="width:100%;">Запрос 2: Аукционы по специфике</button></a>
+    <a href="/query3"><button style="width:100%;">Запрос 3: Разница цен</button></a>
+    <a href="/query4"><button style="width:100%;">Запрос 4: Аукцион-рекордсмен</button></a>
+    <a href="/query5"><button style="width:100%;">Запрос 5: Покупатель</button></a>
+    <a href="/query6"><button style="width:100%;">Запрос 6: Продавец</button></a>
+  </div>
+</div>
+
+<footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
 </body>
 </html>

@@ -1,36 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Регистрация</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Регистрация</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="container" style="max-width: 450px;">
-    <h1>Регистрация</h1>
-    <% if (error) { %>
-      <p style="color: #ff6b6b;"><%= error %></p>
-    <% } %>
-    <form method="post">
-      <label>ФИО:</label>
-      <input name="full_name" required>
-      <label>Email:</label>
-      <input type="email" name="email" required>
-      <label>Пароль:</label>
-      <input type="password" name="password" required>
-      <input type="hidden" name="role" value="user">
-  <option value="user">Покупатель</option>
-  <option value="seller">Продавец</option>
-  <option value="both">Продавец и Покупатель</option>
-</select>
-        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; cursor: pointer;">
-            <input type="checkbox" name="agreement" required style="width: auto; margin: 0;">
-            <span>Я согласен на <a href="/privacy" target="_blank">обработку персональных данных</a> и принимаю <a href="/terms" target="_blank">пользовательское соглашение</a></span>
-        </label>
-        <button type="submit">Зарегистрироваться</button>
-    </form>
-    <p>Есть аккаунт? <a href="/login">Войти</a></p>
-    <a href="/">← На главную</a>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <a href="/login" class="btn-outline">Войти</a>
+    </nav>
   </div>
+</header>
+
+<div class="container">
+  <h1>Регистрация</h1>
+  <% if (error) { %>
+    <p style="color:#ff4444;"><%= error %></p>
+  <% } %>
+  <form method="post">
+    <label>ФИО</label>
+    <input name="full_name" required>
+    <label>Email</label>
+    <input type="email" name="email" required>
+    <label>Пароль</label>
+    <input type="password" name="password" required>
+    <input type="hidden" name="role" value="user">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+      <input type="checkbox" name="agreement" required style="width:auto;margin:0;">
+      <span style="text-transform:none;letter-spacing:0;font-size:13px;">Согласен с <a href="/terms" target="_blank">условиями</a></span>
+    </label>
+    <button type="submit">Зарегистрироваться</button>
+  </form>
+  <p style="margin-top:20px;">Есть аккаунт? <a href="/login">Войти</a></p>
+</div>
+
+<footer class="footer">
+  <p>© 2026 AURUM Auction House</p>
+</footer>
 </body>
 </html>

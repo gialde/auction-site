@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Аукцион-рекордсмен</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -12,7 +12,7 @@
     <% if (auction) { %>
       <p><strong>Название:</strong> <%= auction.name %></p>
       <p><strong>Место:</strong> <%= auction.place %></p>
-      <p><strong>Дата:</strong> <%= auction.date.toLocaleDateString %></p>
+      <p><strong>Дата:</strong> <%= new Date(auction.date).toLocaleDateString('ru-RU') %></p>
       <p><strong>Продано лотов:</strong> <%= auction.sold %></p>
     <% } else { %>
       <p>Нет данных о продажах.</p>

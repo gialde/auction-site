@@ -5,8 +5,13 @@ require('dotenv').config();
 const { pool, initDB } = require('./db');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
 
 const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(server);
 const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
@@ -16,10 +21,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Сессии
 app.use(session({
+  store: new pgSession({
+    pool: pool,
+    tableName: 'session'
+  }),
   secret: process.env.SECRET_KEY || 'auction-secret-key',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 24 часа
+  cookie: { maxAge: 1000 * 60 * 60 * 24 }
 }));
 
 // Делаем user доступным во всех шаблонах
@@ -209,8 +218,8 @@ app.route('/query2')
       SELECT DISTINCT a.name, a.place, a.date
       FROM auctions a
       JOIN items i ON i.auction_id = a.id
-      JOIN sales s ON s.item_id = i.id
-      WHERE a.specifics = $1
+      JOIN deals d ON d.item_id = i.id
+      WHERE a.specifics = $1 AND d.status = 'done'
     `, [specifics]);
     const allSpecifics = await pool.query('SELECT DISTINCT specifics FROM auctions ORDER BY specifics');
     res.render('query2', { auctions: result.rows, specifics: allSpecifics.rows });
@@ -218,160 +227,52 @@ app.route('/query2')
 // ---------- Запрос 3 ----------
 app.get('/query3', async (req, res) => {
   const result = await pool.query(`
-    SELECT i.name, i.start_price, s.final_price,
-           (s.final_price - i.start_price) AS difference
-    FROM items i JOIN sales s ON i.id = s.item_id
+    SELECT i.name, i.start_price, d.amount AS final_price,
+           (d.amount - i.start_price) AS difference
+    FROM items i
+    JOIN deals d ON i.id = d.item_id
+    WHERE d.status = 'done'
     ORDER BY difference DESC LIMIT 1
   `);
-  res.render('query3', { item: result.rows[0] });
+  res.render('query3', { item: result.rows[0] || null });
 });
 
 // ---------- Запрос 4 ----------
 app.get('/query4', async (req, res) => {
   const result = await pool.query(`
-    SELECT a.name, a.place, a.date, COUNT(s.item_id)::int AS sold
+    SELECT a.name, a.place, a.date, COUNT(d.item_id)::int AS sold
     FROM auctions a
     JOIN items i ON i.auction_id = a.id
-    JOIN sales s ON s.item_id = i.id
+    JOIN deals d ON d.item_id = i.id
+    WHERE d.status = 'done'
     GROUP BY a.id
     ORDER BY sold DESC LIMIT 1
   `);
-  res.render('query4', { auction: result.rows[0] });
+  res.render('query4', { auction: result.rows[0] || null });
 });
 
 // ---------- Запрос 5 ----------
 app.get('/query5', async (req, res) => {
   const result = await pool.query(`
-    SELECT b.full_name, b.passport, s.final_price
-    FROM buyers b
-    JOIN sales s ON b.id = s.buyer_id
-    JOIN items i ON s.item_id = i.id
-    ORDER BY s.final_price DESC LIMIT 1
+    SELECT u.full_name, u.email, d.amount AS final_price
+    FROM users u
+    JOIN deals d ON u.id = d.buyer_id
+    ORDER BY d.amount DESC LIMIT 1
   `);
-  res.render('query5', { buyer: result.rows[0] });
+  res.render('query5', { buyer: result.rows[0] || null });
 });
 
 // ---------- Запрос 6 ----------
 app.get('/query6', async (req, res) => {
   const result = await pool.query(`
-    SELECT sel.full_name, sel.passport, s.final_price
-    FROM sellers sel
-    JOIN items i ON sel.id = i.creator_id
-    JOIN sales s ON s.item_id = i.id
-    ORDER BY s.final_price DESC LIMIT 1
+    SELECT u.full_name, u.email, d.amount AS final_price
+    FROM users u
+    JOIN deals d ON u.id = d.seller_id
+    ORDER BY d.amount DESC LIMIT 1
   `);
-  res.render('query6', { seller: result.rows[0] });
+  res.render('query6', { seller: result.rows[0] || null });
 });
-
 // ---------- Управление лотами ----------
-app.route('/add-item')
-  .get(async (req, res) => {
-    const aucRes = await pool.query('SELECT * FROM auctions ORDER BY date');
-    const selRes = await pool.query('SELECT id, full_name FROM sellers ORDER BY full_name');
-    res.render('add_item', {
-      auctions: aucRes.rows,
-      sellers: selRes.rows,
-      selectedAuction: null,
-      lots: [],
-      message: null
-    });
-  })
-  .post(async (req, res) => {
-    const { auction_id, action, lot_id, creator_id, name, description, start_price } = req.body;
-
-    // Вспомогательная функция для загрузки данных аукциона
-    async function loadAuctionData(aid, msg) {
-      const aucRes = await pool.query('SELECT * FROM auctions ORDER BY date');
-      const selRes = await pool.query('SELECT id, full_name FROM sellers ORDER BY full_name');
-      const lotsRes = await pool.query(`
-        SELECT i.*, s.full_name AS seller_name,
-               CASE WHEN sales.item_id IS NULL THEN FALSE ELSE TRUE END AS is_sold
-        FROM items i
-        JOIN sellers s ON i.creator_id = s.id
-        LEFT JOIN sales ON sales.item_id = i.id
-        WHERE i.auction_id = $1
-        ORDER BY i.lot_number
-      `, [aid]);
-      return {
-        auctions: aucRes.rows,
-        sellers: selRes.rows,
-        selectedAuction: aid,
-        lots: lotsRes.rows,
-        message: msg
-      };
-    }
-
-    if (action === 'select') {
-      const data = await loadAuctionData(auction_id, null);
-      return res.render('add_item', data);
-    }
-
-    if (action === 'add') {
-      const sid = parseInt(creator_id);
-      
-      if (!sid || sid <= 0) {
-        const data = await loadAuctionData(auction_id, 'Ошибка: выберите продавца из списка.');
-        return res.render('add_item', data);
-      }
-
-      const lotRes = await pool.query(
-        'SELECT COALESCE(MAX(lot_number),0)+1 AS next_lot FROM items WHERE auction_id=$1',
-        [auction_id]
-      );
-      const nextLot = lotRes.rows[0].next_lot;
-
-      await pool.query(`
-        INSERT INTO items (auction_id, lot_number, creator_id, name, description, start_price)
-        VALUES ($1,$2,$3,$4,$5,$6)
-      `, [auction_id, nextLot, sid, name, description, start_price]);
-
-      return res.redirect(303, `/add-item?auction_id=${auction_id}&msg=added`);
-    }
-
-    if (action === 'delete') {
-      const check = await pool.query('SELECT * FROM sales WHERE item_id=$1', [lot_id]);
-      if (check.rows.length > 0) {
-        const data = await loadAuctionData(auction_id, 'Ошибка: нельзя удалить проданный лот.');
-        return res.render('add_item', data);
-      }
-
-      await pool.query('DELETE FROM items WHERE id=$1', [lot_id]);
-      return res.redirect(303, `/add-item?auction_id=${auction_id}&msg=deleted`);
-    }
-
-    res.redirect('/add-item');
-  });
-
-// Для редиректов с сообщением
-app.get('/add-item', async (req, res) => {
-  const auction_id = req.query.auction_id;
-  const msg = req.query.msg;
-  const aucRes = await pool.query('SELECT * FROM auctions ORDER BY date');
-  const selRes = await pool.query('SELECT id, full_name FROM sellers ORDER BY full_name');
-  let lots = [];
-  if (auction_id) {
-    const lotsRes = await pool.query(`
-      SELECT i.*, s.full_name AS seller_name,
-             CASE WHEN sales.item_id IS NULL THEN FALSE ELSE TRUE END AS is_sold
-      FROM items i
-      JOIN sellers s ON i.creator_id = s.id
-      LEFT JOIN sales ON sales.item_id = i.id
-      WHERE i.auction_id = $1
-      ORDER BY i.lot_number
-    `, [auction_id]);
-    lots = lotsRes.rows;
-  }
-  let message = null;
-  if (msg === 'added') message = 'Лот успешно добавлен.';
-  if (msg === 'deleted') message = 'Лот удалён.';
-  res.render('add_item', {
-    auctions: aucRes.rows,
-    sellers: selRes.rows,
-    selectedAuction: auction_id || null,
-    lots,
-    message
-  });
-});
 
 // ---------- Админ-панель ----------
 app.get('/admin', requireAuth, requireRole('admin'), (req, res) => {
@@ -594,6 +495,157 @@ app.post('/admin/moderate/reject', requireAuth, requireRole('admin'), async (req
   await pool.query('UPDATE items SET status=$1 WHERE id=$2', ['rejected', req.body.item_id]);
   res.redirect('/admin/moderate');
 });
+// ---------- Управление аукционами ----------
+app.get('/admin/auctions', requireAuth, requireRole('admin'), async (req, res) => {
+  const auctions = await pool.query('SELECT * FROM auctions ORDER BY date');
+  res.render('admin_auctions', { auctions: auctions.rows, message: req.query.msg || null });
+});
+
+app.post('/admin/auctions/delete', requireAuth, requireRole('admin'), async (req, res) => {
+  const { auction_id } = req.body;
+  await pool.query('DELETE FROM bids WHERE item_id IN (SELECT id FROM items WHERE auction_id=$1)', [auction_id]);
+  await pool.query('DELETE FROM deals WHERE item_id IN (SELECT id FROM items WHERE auction_id=$1)', [auction_id]);
+  await pool.query('DELETE FROM items WHERE auction_id=$1', [auction_id]);
+  await pool.query('DELETE FROM auctions WHERE id=$1', [auction_id]);
+  res.redirect('/admin/auctions?msg=Аукцион+удалён');
+});
+// ---------- Управление лотами (админ) ----------
+app.get('/admin/items', requireAuth, requireRole('admin'), async (req, res) => {
+  const auction_id = req.query.auction_id || '';
+  
+  let query = `
+    SELECT i.*, a.name AS auction_name, u.email AS creator_email
+    FROM items i
+    JOIN auctions a ON i.auction_id = a.id
+    JOIN users u ON i.creator_id = u.id
+  `;
+  let params = [];
+  
+  if (auction_id) {
+    query += ' WHERE i.auction_id = $1';
+    params.push(auction_id);
+  }
+  
+  query += ' ORDER BY a.date, i.lot_number';
+  
+  const items = await pool.query(query, params);
+  const auctions = await pool.query('SELECT * FROM auctions ORDER BY date');
+  
+  res.render('admin_items', {
+    items: items.rows,
+    auctions: auctions.rows,
+    selectedAuction: auction_id,
+    message: req.query.msg || null
+  });
+});
+
+app.post('/admin/items/delete', requireAuth, requireRole('admin'), async (req, res) => {
+  const { item_id } = req.body;
+  await pool.query('DELETE FROM bids WHERE item_id=$1', [item_id]);
+  await pool.query('DELETE FROM deals WHERE item_id=$1', [item_id]);
+  await pool.query('DELETE FROM items WHERE id=$1', [item_id]);
+  res.redirect('/admin/items?msg=Лот+удалён');
+});
+// ---------- Чат по сделке ----------
+app.route('/chat/:dealId')
+  .get(requireAuth, async (req, res) => {
+    const deal = await pool.query(`
+      SELECT d.*, i.name AS item_name
+      FROM deals d
+      JOIN items i ON d.item_id = i.id
+      WHERE d.id = $1 AND (d.buyer_id = $2 OR d.seller_id = $2)
+    `, [req.params.dealId, req.session.user.id]);
+    
+    if (deal.rows.length === 0) return res.redirect('/profile');
+    
+    const d = deal.rows[0];
+    const partnerId = d.buyer_id === req.session.user.id ? d.seller_id : d.buyer_id;
+    const partner = await pool.query('SELECT * FROM users WHERE id=$1', [partnerId]);
+    
+    const messages = await pool.query(`
+      SELECT * FROM messages
+      WHERE deal_id = $1
+      ORDER BY created_at
+    `, [req.params.dealId]);
+    
+    res.render('chat', {
+      deal: d,
+      partner: partner.rows[0],
+      messages: messages.rows
+    });
+  })
+  .post(requireAuth, async (req, res) => {
+    const deal = await pool.query('SELECT * FROM deals WHERE id=$1', [req.params.dealId]);
+    const d = deal.rows[0];
+    const partnerId = d.buyer_id === req.session.user.id ? d.seller_id : d.buyer_id;
+    
+    await pool.query(`
+      INSERT INTO messages (deal_id, sender_id, receiver_id, message)
+      VALUES ($1,$2,$3,$4)
+    `, [req.params.dealId, req.session.user.id, partnerId, req.body.message]);
+    
+    res.redirect(`/chat/${req.params.dealId}`);
+  });
+
+// ---------- Поддержка ----------
+app.route('/support')
+  .get(requireAuth, async (req, res) => {
+    // Ищем админа
+    const admin = await pool.query("SELECT * FROM users WHERE role='admin' LIMIT 1");
+    const adminId = admin.rows[0]?.id || 1;
+    
+    const messages = await pool.query(`
+      SELECT m.*, u.full_name AS sender_name
+      FROM messages m
+      JOIN users u ON m.sender_id = u.id
+      WHERE m.deal_id IS NULL AND (m.sender_id = $1 OR m.receiver_id = $1)
+      ORDER BY m.created_at
+    `, [req.session.user.id]);
+    
+    res.render('support', { messages: messages.rows });
+  })
+  .post(requireAuth, async (req, res) => {
+    const admin = await pool.query("SELECT * FROM users WHERE role='admin' LIMIT 1");
+    const adminId = admin.rows[0]?.id || 1;
+    
+    await pool.query(`
+      INSERT INTO messages (deal_id, sender_id, receiver_id, message)
+      VALUES (NULL, $1, $2, $3)
+    `, [req.session.user.id, adminId, req.body.message]);
+    
+    res.redirect('/support');
+  });
+
+// Админ видит обращения
+app.get('/admin/support', requireAuth, requireRole('admin'), async (req, res) => {
+  const users = await pool.query(`
+    SELECT DISTINCT u.id, u.full_name, u.email
+    FROM messages m
+    JOIN users u ON (m.sender_id = u.id OR m.receiver_id = u.id)
+    WHERE m.deal_id IS NULL AND u.id != $1
+  `, [req.session.user.id]);
+  res.render('admin_support_list', { users: users.rows });
+});
+
+app.route('/admin/support/:userId')
+  .get(requireAuth, requireRole('admin'), async (req, res) => {
+    const messages = await pool.query(`
+      SELECT m.*, u.full_name AS sender_name
+      FROM messages m
+      JOIN users u ON m.sender_id = u.id
+      WHERE m.deal_id IS NULL AND (m.sender_id = $1 OR m.receiver_id = $1)
+      ORDER BY m.created_at
+    `, [req.params.userId]);
+    const user = await pool.query('SELECT * FROM users WHERE id=$1', [req.params.userId]);
+    res.render('admin_support_chat', { messages: messages.rows, chatUser: user.rows[0] });
+  })
+  .post(requireAuth, requireRole('admin'), async (req, res) => {
+    await pool.query(`
+      INSERT INTO messages (deal_id, sender_id, receiver_id, message)
+      VALUES (NULL, $1, $2, $3)
+    `, [req.session.user.id, req.params.userId, req.body.message]);
+    res.redirect(`/admin/support/${req.params.userId}`);
+  });
 // ---------- Старт ----------
 
 app.get('/privacy', (req, res) => res.render('privacy'));
@@ -611,15 +663,15 @@ app.get('/profile', requireAuth, async (req, res) => {
     ORDER BY b.bid_time DESC
   `, [req.session.user.id]);
   const deals = await pool.query(`
-    SELECT d.*, i.name AS item_name
-    FROM deals d
-    JOIN items i ON d.item_id = i.id
-    WHERE d.buyer_id = $1
-    ORDER BY d.created_at DESC
-  `, [req.session.user.id]);
+  SELECT d.*, i.name AS item_name
+  FROM deals d
+  JOIN items i ON d.item_id = i.id
+  WHERE d.buyer_id = $1 OR d.seller_id = $1
+  ORDER BY d.created_at DESC
+`, [req.session.user.id]);
   res.render('profile', { profile: user.rows[0], myBids: myBids.rows, deals: deals.rows });
 });
 
 initDB().then(() => {
-  app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+  server.listen(PORT, () => console.log(`http://localhost:${PORT}`));
 });

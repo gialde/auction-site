@@ -1,68 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title><%= item.name %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= item.name %> — AURUM</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="container">
-    <a href="/">← На главную</a>
-    <h1><%= item.name %></h1>
-    
-    <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.06);">
-      <p><strong>Описание:</strong> <%= item.description || 'Нет описания' %></p>
-      <p><strong>Аукцион:</strong> <%= item.auction_name %></p>
-      <p><strong>Лот №:</strong> <%= item.lot_number %></p>
-      <p><strong>Стартовая цена:</strong> <span style="font-size: 24px; color: #c9a96e;"><%= item.start_price %> руб.</span></p>
-      <% if (maxBid) { %>
-        <p><strong>Текущая ставка:</strong> <span style="font-size: 24px; color: #4CAF50;"><%= maxBid.amount %> руб.</span></p>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <% if (user) { %>
+        <a href="/profile">Профиль</a>
+        <a href="/logout" class="btn-outline">Выйти</a>
       <% } else { %>
-        <p><strong>Текущая ставка:</strong> нет ставок</p>
+        <a href="/login" class="btn-outline">Войти</a>
+      <% } %>
+    </nav>
+  </div>
+</header>
+
+<div class="container-wide">
+  <h1><%= item.name %></h1>
+  
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px; margin:20px 0;">
+    <div>
+      <p style="color:#666;">Описание</p>
+      <p><%= item.description || 'Нет описания' %></p>
+      <p style="color:#666;margin-top:15px;">Аукцион</p>
+      <p><%= item.auction_name %></p>
+      <p style="color:#666;margin-top:15px;">Лот №</p>
+      <p><%= item.lot_number %></p>
+      <p style="color:#666;margin-top:15px;">Стартовая цена</p>
+      <p style="font-family:'Playfair Display',serif; font-size:36px; color:#c9a96e;"><%= item.start_price.toLocaleString() %> ₽</p>
+    </div>
+    <div style="border:1px solid #222; padding:30px; text-align:center;">
+      <p style="color:#666;">Текущая ставка</p>
+      <p style="font-family:'Playfair Display',serif; font-size:48px; color:#fff; margin:15px 0;">
+        <%= maxBid ? maxBid.amount.toLocaleString() + ' ₽' : 'Нет ставок' %>
+      </p>
+      <% if (user && !item.is_ended) { %>
+        <form method="post" action="/item/<%= item.id %>/bid" style="margin-top:20px; display:flex; gap:10px;">
+          <input type="number" name="amount" min="<%= maxBid ? maxBid.amount + 1 : item.start_price %>" required placeholder="Ваша ставка" style="margin:0;">
+          <button type="submit" style="white-space:nowrap;">Ставка</button>
+        </form>
+        <p style="color:#666;margin-top:8px;">Баланс: <%= user.balance.toLocaleString() %> ₽</p>
+      <% } else if (!user) { %>
+        <p><a href="/login">Войдите</a>, чтобы сделать ставку.</p>
       <% } %>
       <% if (user && user.role === 'admin' && !item.is_ended) { %>
-        <form method="post" action="/item/<%= item.id %>/end" style="margin-top: 20px;" onsubmit="return confirm('Завершить аукцион? Победитель будет определён по максимальной ставке.')">
-            <button type="submit" style="background:#4CAF50;">Завершить аукцион</button>
+        <form method="post" action="/item/<%= item.id %>/end" style="margin-top:15px;">
+          <button type="submit">Завершить аукцион</button>
         </form>
       <% } %>
-
-      <% if (item.is_ended && item.winner_id) { %>
-        <div style="background: rgba(76,175,80,0.1); padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid rgba(76,175,80,0.3);">
-            <p style="color: #4CAF50;">Аукцион завершён. Победитель определён.</p>
-        </div>
+      <% if (item.is_ended) { %>
+        <p style="color:#c9a96e;margin-top:15px;">Аукцион завершён</p>
       <% } %>
     </div>
-
-    <!-- Ставка -->
-    <% if (user) { %>
-      <form method="post" action="/item/<%= item.id %>/bid">
-        <label>Ваша ставка (руб.):</label>
-        <div style="display: flex; gap: 10px;">
-          <input type="number" name="amount" min="<%= maxBid ? maxBid.amount + 1 : item.start_price %>" step="0.01" required>
-          <button type="submit">Сделать ставку</button>
-        </div>
-      </form>
-      <p style="color: #888; font-size: 13px;">Ваш баланс: <%= user.balance || 0 %> руб.</p>
-    <% } else { %>
-      <p><a href="/login">Войдите</a>, чтобы сделать ставку.</p>
-    <% } %>
-
-    <!-- История ставок -->
-    <h2>📜 История ставок</h2>
-    <% if (bids.length === 0) { %>
-      <p>Ставок пока нет.</p>
-    <% } else { %>
-      <table>
-        <tr><th>Пользователь</th><th>Сумма</th><th>Время</th></tr>
-        <% bids.forEach(b => { %>
-          <tr>
-            <td><%= b.full_name %></td>
-            <td style="color: #c9a96e;"><%= b.amount %> руб.</td>
-            <td><%= new Date(b.bid_time).toLocaleString('ru-RU') %></td>
-          </tr>
-        <% }) %>
-      </table>
-    <% } %>
   </div>
+
+  <h2>История ставок</h2>
+  <% if (bids.length === 0) { %><p style="color:#666;">Ставок пока нет.</p><% } else { %>
+    <table>
+      <tr><th>Пользователь</th><th>Сумма</th><th>Время</th></tr>
+      <% bids.forEach(b => { %>
+        <tr>
+          <td><%= b.full_name %></td>
+          <td style="color:#c9a96e;"><%= b.amount.toLocaleString() %> ₽</td>
+          <td><%= new Date(b.bid_time).toLocaleString('ru-RU') %></td>
+        </tr>
+      <% }) %>
+    </table>
+  <% } %>
+</div>
+
+<footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
 </body>
 </html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Управление лотами</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <a href="/admin">Админ</a>
+      <a href="/logout" class="btn-outline">Выйти</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container-wide" style="overflow-x:auto;">
+  <h1>Управление лотами</h1>
+  <% if (message) { %><p style="color:#c9a96e;"><%= message %></p><% } %>
+
+  <form method="get" action="/admin/items" style="display:flex; gap:10px; flex-wrap:wrap;">
+    <select name="auction_id" style="flex:1; min-width:200px;">
+      <option value="">Все аукционы</option>
+      <% auctions.forEach(a => { %>
+        <option value="<%= a.id %>" <%= (selectedAuction && selectedAuction == a.id) ? 'selected' : '' %>><%= a.name %></option>
+      <% }) %>
+    </select>
+    <button type="submit" style="white-space:nowrap;">Показать</button>
+  </form>
+
+  <div style="overflow-x:auto; margin-top:20px;">
+    <table>
+      <tr><th>Лот №</th><th>Название</th><th>Аукцион</th><th>Цена</th><th>Создатель</th><th>Статус</th><th>Действие</th></tr>
+      <% if (items.length === 0) { %>
+        <tr><td colspan="7">Нет лотов.</td></tr>
+      <% } else { %>
+        <% items.forEach(item => { %>
+          <tr>
+            <td><%= item.lot_number %></td>
+            <td><a href="/item/<%= item.id %>"><%= item.name %></a></td>
+            <td><%= item.auction_name %></td>
+            <td><%= item.start_price %> ₽</td>
+            <td><%= item.creator_email %></td>
+            <td>
+              <% if (item.status === 'pending') { %>⏳ Модерация
+              <% } else if (item.status === 'approved') { %>✅ Одобрен
+              <% } else if (item.status === 'rejected') { %>❌ Отклонён
+              <% } %>
+              <% if (item.is_ended) { %>| 🏁<% } %>
+            </td>
+            <td>
+              <form method="post" action="/admin/items/delete" style="display:inline;" onsubmit="return confirm('Удалить лот?')">
+                <input type="hidden" name="item_id" value="<%= item.id %>">
+                <button type="submit" style="padding:6px 10px;font-size:10px;border-color:#ff4444;color:#ff4444;">Удалить</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </table>
+  </div>
+</div>
+
+<footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
+</body>
+</html>

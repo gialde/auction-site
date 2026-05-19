@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Аукционы</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <a href="/admin">Админ</a>
+      <a href="/logout" class="btn-outline">Выйти</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container-wide" style="overflow-x:auto;">
+  <h1>Управление аукционами</h1>
+  <% if (message) { %><p style="color:#c9a96e;"><%= message %></p><% } %>
+
+  <div style="overflow-x:auto;">
+    <table>
+      <tr><th>ID</th><th>Название</th><th>Место</th><th>Дата</th><th>Специфика</th><th>Действие</th></tr>
+      <% auctions.forEach(a => { %>
+        <tr>
+          <td><%= a.id %></td>
+          <td><%= a.name %></td>
+          <td><%= a.place %></td>
+          <td><%= new Date(a.date).toLocaleDateString('ru-RU') %></td>
+          <td><%= a.specifics || '-' %></td>
+          <td>
+            <form method="post" action="/admin/auctions/delete" style="display:inline;" onsubmit="return confirm('Удалить аукцион и все лоты?')">
+              <input type="hidden" name="auction_id" value="<%= a.id %>">
+              <button type="submit" style="padding:6px 10px;font-size:10px;border-color:#ff4444;color:#ff4444;">Удалить</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </table>
+  </div>
+  <a href="/admin/auctions/add"><button style="margin-top:15px;">Добавить аукцион</button></a>
+</div>
+
+<footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
+</body>
+</html>

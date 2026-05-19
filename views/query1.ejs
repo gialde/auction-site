@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Запрос 1 – Предметы на дату и аукцион</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -40,7 +40,7 @@
               <td><%= item.lot_number %></td>
               <td><%= item.name %></td>
               <td><%= item.start_price %></td>
-              <td><%= item.seller %></td>
+              <td><%= item.creator_name %></td>
             </tr>
           <% }); %>
         </table>

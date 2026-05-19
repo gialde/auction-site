@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Чат с пользователем</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .chat-box {
+      background: #0a0a0a; border: 1px solid #222; padding: 20px;
+      height: 400px; overflow-y: auto; margin: 15px 0;
+    }
+    .msg {
+      margin-bottom: 15px; padding: 12px 18px; max-width: 70%;
+      font-size: 14px;
+    }
+    .msg-mine {
+      background: rgba(201,169,110,0.1); margin-left: auto; text-align: right;
+      border-left: 2px solid #c9a96e;
+    }
+    .msg-other {
+      background: #111; border-left: 2px solid #333;
+    }
+    .msg-time {
+      font-size: 10px; color: #666; margin-top: 6px; text-transform: uppercase; letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
+    <nav class="nav-links">
+      <a href="/">Главная</a>
+      <a href="/admin">Админ</a>
+      <a href="/admin/support">Обращения</a>
+      <a href="/logout" class="btn-outline">Выйти</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container-wide">
+  <h1>Чат с <%= chatUser.full_name %></h1>
+
+  <div class="chat-box" id="chatBox">
+    <% messages.forEach(m => { %>
+      <div class="msg <%= m.sender_id === user.id ? 'msg-mine' : 'msg-other' %>">
+        <div><strong style="color:#c9a96e;"><%= m.sender_name %>:</strong> <%= m.message %></div>
+        <div class="msg-time"><%= new Date(m.created_at).toLocaleString('ru-RU') %></div>
+      </div>
+    <% }) %>
+  </div>
+
+  <form method="post" style="display: flex; gap: 10px;">
+    <input name="message" placeholder="Ответ..." required style="margin:0;">
+    <button type="submit" style="white-space:nowrap;">Отправить</button>
+  </form>
+</div>
+
+<footer class="footer"><p>© 2026 AURUM Auction House</p></footer>
+<script>
+  document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+</script>
+</body>
+</html>

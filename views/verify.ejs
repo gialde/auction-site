@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Подтверждение email</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURUM — Подтверждение</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div class="container" style="max-width: 450px;">
-    <h1>📧 Подтверждение</h1>
-    <p>Мы отправили код на <strong><%= email %></strong></p>
-    <% if (error) { %>
-      <p style="color: #ff6b6b;"><%= error %></p>
-    <% } %>
-    <form method="post" action="/verify">
-      <input type="hidden" name="email" value="<%= email %>">
-      <label>Введите код из письма:</label>
-      <input name="code" placeholder="123456" maxlength="6" required style="font-size:24px; text-align:center; letter-spacing:10px;">
-      <button type="submit">Подтвердить</button>
-    </form>
-    <p style="color: #888; margin-top: 15px;">
-        ⚠️ Не пришло письмо? Проверьте папку <strong>Спам</strong> в вашей почте.
-    </p>
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">AURUM</a>
   </div>
+</header>
+
+<div class="container" style="text-align:center;">
+  <h1>Подтверждение</h1>
+  <p>Мы отправили код на <strong><%= email %></strong></p>
+  <% if (typeof code !== 'undefined') { %>
+    <div style="border:2px dashed #c9a96e; padding:20px; margin:15px 0;">
+      <p style="color:#666;">Ваш код:</p>
+      <h1 style="color:#c9a96e;font-size:40px;letter-spacing:10px;"><%= code %></h1>
+    </div>
+  <% } %>
+  <% if (error) { %><p style="color:#ff4444;"><%= error %></p><% } %>
+  <form method="post" action="/verify">
+    <input type="hidden" name="email" value="<%= email %>">
+    <input name="code" placeholder="Код" maxlength="6" required style="text-align:center;font-size:20px;letter-spacing:8px;">
+    <button type="submit">Подтвердить</button>
+  </form>
+  <p style="margin-top:15px;color:#666;">⚠️ Проверьте папку Спам</p>
+</div>
 </body>
 </html>
