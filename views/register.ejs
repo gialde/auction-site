@@ -22,15 +22,23 @@
     <p style="color:#ff4444;"><%= error %></p>
   <% } %>
   <form method="post">
-    <label>ФИО</label>
-    <input name="full_name" required>
-    <label>Email</label>
-    <input type="email" name="email" required>
-    <label>Пароль</label>
-    <input type="password" name="password" id="password" required>
-    <label>Подтвердите пароль</label>
-    <input type="password" name="password_confirm" id="password_confirm" required>
-    <p id="password-error" style="color:#ff4444; display:none;">Пароли не совпадают!</p>
+    <label>Фамилия *</label>
+  <input name="last_name" required>
+  <label>Имя *</label>
+  <input name="first_name" required>
+  <label>Отчество</label>
+  <input name="middle_name" placeholder="При наличии">
+  <label>Email *</label>
+  <input type="email" name="email" required>
+  <label>Паспорт (серия и номер) *</label>
+  <input name="passport" placeholder="1234 567890" required>
+  <label>Телефон</label>
+  <input name="phone" placeholder="+7 (999) 123-45-67">
+  <label>Пароль *</label>
+  <input type="password" name="password" id="password" required>
+  <label>Подтвердите пароль *</label>
+  <input type="password" name="password_confirm" id="password_confirm" required>
+  <p id="password-error" style="color:#ff4444; display:none;">Пароли не совпадают!</p>
     <input type="hidden" name="role" value="user">
     <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
       <input type="checkbox" name="agreement" required style="width:auto;margin:0;">

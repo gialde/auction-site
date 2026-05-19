@@ -51,7 +51,35 @@ function requireRole(role) {
     next();
   };
 }
+// Socket.io
+io.on('connection', (socket) => {
+  console.log('Пользователь подключился:', socket.id);
+  
+  // Присоединение к комнате чата
+  socket.on('join-chat', (dealId) => {
+    socket.join(`chat-${dealId}`);
+  });
+  
+  // Присоединение к комнате поддержки
+  socket.on('join-support', (userId) => {
+    socket.join(`support-${userId}`);
+  });
+  
+  // Присоединение к комнате лота (для ставок)
+  socket.on('join-item', (itemId) => {
+    socket.join(`item-${itemId}`);
+  });
+  
+  socket.on('disconnect', () => {
+    console.log('Пользователь отключился:', socket.id);
+  });
+});
 
+// Делаем io доступным в маршрутах
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 // ---------- Главная ----------
 app.post('/profile/topup', requireAuth, async (req, res) => {
   const amount = parseFloat(req.body.amount);
@@ -69,38 +97,37 @@ app.route('/register')
     res.render('register', { error: null, step: 1 });
   })
   .post(async (req, res) => {
-    const { email, password, full_name, role } = req.body;
-    if (password !== req.body.password_confirm) {
-      return res.render('register', { error: 'Пароли не совпадают!', step: 1 });
-    }
-    
-    // Проверяем, существует ли уже пользователь
-    const exist = await pool.query('SELECT * FROM users WHERE email=$1', [email]);
-    if (exist.rows.length > 0) {
-      return res.render('register', { error: 'Этот email уже занят.', step: 1 });
-    }
-    
-    // Генерируем код
-    const code = crypto.randomInt(100000, 999999).toString();
-    const hash = await bcrypt.hash(password, 10);
-    
-    // Сохраняем неподтверждённого пользователя
-    await pool.query(
-      'INSERT INTO users (email, password, full_name, role, verification_code, verified) VALUES ($1,$2,$3,$4,$5,FALSE)',
-      [email, hash, full_name, role || 'user', code]
-    );
-    
-    // Отправляем код на почту
-    try {
-      await sendVerificationCode(email, code);
-    } catch (err) {
-      console.error('Ошибка отправки:', err);
-      return res.render('register', { error: 'Не удалось отправить код. Проверьте email.', step: 1 });
-    }
-    
-    res.render('verify', { email, error: null });
-  });
-
+  const { email, password, first_name, last_name, middle_name, passport, phone, role } = req.body;
+  
+  if (password !== req.body.password_confirm) {
+    return res.render('register', { error: 'Пароли не совпадают!', step: 1 });
+  }
+  
+  const full_name = [last_name, first_name, middle_name].filter(Boolean).join(' ');
+  
+  const exist = await pool.query('SELECT * FROM users WHERE email=$1', [email]);
+  if (exist.rows.length > 0) {
+    return res.render('register', { error: 'Этот email уже занят.', step: 1 });
+  }
+  
+  const code = crypto.randomInt(100000, 999999).toString();
+  const hash = await bcrypt.hash(password, 10);
+  
+  await pool.query(
+    `INSERT INTO users (email, password, full_name, first_name, last_name, middle_name, passport, phone, role, verification_code, verified)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,FALSE)`,
+    [email, hash, full_name, first_name, last_name, middle_name || null, passport, phone || null, role || 'user', code]
+  );
+  
+  try {
+    await sendVerificationCode(email, code);
+  } catch (err) {
+    console.error('Ошибка отправки:', err);
+    return res.render('register', { error: 'Не удалось отправить код.', step: 1 });
+  }
+  
+  res.render('verify', { email, error: null });
+});
 // ---------- Подтверждение кода ----------
 app.route('/verify')
   .get((req, res) => res.redirect('/register'))
