@@ -1,67 +1,243 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AURUM — Регистрация</title>
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .error-message {
+      color: #ff4444;
+      font-size: 11px;
+      margin-top: -15px;
+      margin-bottom: 15px;
+      display: none;
+    }
+    input.error {
+      border-color: #ff4444;
+    }
+  </style>
 </head>
 <body>
-<header class="header">
-  <div class="header-inner">
-    <a href="/" class="logo">AURUM</a>
-    <nav class="nav-links">
-      <a href="/">Главная</a>
-      <a href="/login" class="btn-outline">Войти</a>
-    </nav>
-  </div>
-</header>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">AURUM</a>
+      <nav class="nav-links">
+        <a href="/">Главная</a>
+        <a href="/login" class="btn-outline">Войти</a>
+      </nav>
+    </div>
+  </header>
 
-<div class="container">
-  <h1>Регистрация</h1>
-  <% if (error) { %>
-    <p style="color:#ff4444;"><%= error %></p>
-  <% } %>
-  <form method="post">
-    <label>Фамилия *</label>
-  <input name="last_name" required>
-  <label>Имя *</label>
-  <input name="first_name" required>
-  <label>Отчество</label>
-  <input name="middle_name" placeholder="При наличии">
-  <label>Email *</label>
-  <input type="email" name="email" required>
-  <label>Паспорт (серия и номер) *</label>
-  <input name="passport" placeholder="1234 567890" required>
-  <label>Телефон</label>
-  <input name="phone" placeholder="+7 (999) 123-45-67">
-  <label>Пароль *</label>
-  <input type="password" name="password" id="password" required>
-  <label>Подтвердите пароль *</label>
-  <input type="password" name="password_confirm" id="password_confirm" required>
-  <p id="password-error" style="color:#ff4444; display:none;">Пароли не совпадают!</p>
-    <input type="hidden" name="role" value="user">
-    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
-      <input type="checkbox" name="agreement" required style="width:auto;margin:0;">
-      <span style="text-transform:none;letter-spacing:0;font-size:13px;">Согласен с <a href="/terms" target="_blank">условиями</a></span>
-    </label>
-    <script>
-    document.querySelector('form').addEventListener('submit', function(e) {
-      const pass = document.getElementById('password').value;
-      const confirm = document.getElementById('password_confirm').value;
-      if (pass !== confirm) {
-      e.preventDefault();
-      document.getElementById('password-error').style.display = 'block';
-      }
-});
-</script>
-    <button type="submit">Зарегистрироваться</button>
+  <div class="container">
+    <h1>Регистрация</h1>
+    <% if (error) { %>
+      <p style="color:#ff4444;"><%= error %></p>
+    <% } %>
     
-  </form>
-  <p style="margin-top:20px;">Есть аккаунт? <a href="/login">Войти</a></p>
-</div>
+    <form method="post" id="registerForm">
+      <label>Фамилия *</label>
+      <input name="last_name" required>
+      
+      <label>Имя *</label>
+      <input name="first_name" required>
+      
+      <label>Отчество</label>
+      <input name="middle_name" placeholder="При наличии">
+      
+      <label>Email *</label>
+      <input type="email" name="email" id="email" required>
+      <div class="error-message" id="emailError">Введите корректный email (например, name@domain.com)</div>
+      
+      <label>Паспорт (серия и номер) *</label>
+      <input name="passport" id="passport" placeholder="1234 567890" required>
+      <div class="error-message" id="passportError">Формат: 4 цифры, пробел, 6 цифр (например, 1234 567890)</div>
+      
+      <label>Телефон</label>
+      <input name="phone" id="phone" placeholder="+7___-___-__-__" maxlength="18">
+      <div class="error-message" id="phoneError">Введите 10 цифр после +7 (например, 9011234567)</div>
+      
+      <label>Пароль *</label>
+      <input type="password" name="password" id="password" required>
+      
+      <label>Подтвердите пароль *</label>
+      <input type="password" name="password_confirm" id="password_confirm" required>
+      <div class="error-message" id="passwordError">Пароли не совпадают</div>
+      
+      <input type="hidden" name="role" value="user">
+      
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+        <input type="checkbox" name="agreement" required style="width:auto;margin:0;">
+        <span style="text-transform:none;letter-spacing:0;font-size:13px;">Согласен с <a href="/terms" target="_blank">условиями</a></span>
+      </label>
+      
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+    
+    <p style="margin-top:20px;">Есть аккаунт? <a href="/login">Войти</a></p>
+  </div>
 
-<footer class="footer">
-  <p>© 2026 AURUM Auction House</p>
-</footer>
+  <footer class="footer">
+    <p>© 2026 AURUM Auction House</p>
+  </footer>
+
+  <script>
+    // Автоматическая установка +7 в поле телефона
+    const phoneInput = document.getElementById('phone');
+    
+    // Устанавливаем +7 при фокусе, если поле пустое
+    phoneInput.addEventListener('focus', function(e) {
+      if (e.target.value === '') {
+        e.target.value = '+7';
+      }
+    });
+    
+    // Обработка ввода телефона (только цифры после +7)
+    phoneInput.addEventListener('input', function(e) {
+      let value = e.target.value;
+      
+      // Если поле пустое или удалили всё, ставим +7
+      if (value === '' || value === '+') {
+        e.target.value = '+7';
+        return;
+      }
+      
+      // Если нет +7 в начале, добавляем
+      if (!value.startsWith('+7')) {
+        let cleaned = value.replace(/[^\d]/g, '');
+        if (cleaned.length > 0) {
+          e.target.value = '+7' + cleaned.slice(0, 10);
+        } else {
+          e.target.value = '+7';
+        }
+        return;
+      }
+      
+      // Берём только цифры после +7
+      let afterPlus = value.substring(2).replace(/[^\d]/g, '');
+      if (afterPlus.length > 10) afterPlus = afterPlus.slice(0, 10);
+      
+      // Форматируем для красоты: +7 123 456 78 90
+      let formatted = '+7';
+      if (afterPlus.length > 0) {
+        formatted += ' ' + afterPlus.slice(0, 3);
+      }
+      if (afterPlus.length > 3) {
+        formatted += ' ' + afterPlus.slice(3, 6);
+      }
+      if (afterPlus.length > 6) {
+        formatted += ' ' + afterPlus.slice(6, 8);
+      }
+      if (afterPlus.length > 8) {
+        formatted += ' ' + afterPlus.slice(8, 10);
+      }
+      
+      e.target.value = formatted.trim();
+      
+      // Валидация
+      const errorDiv = document.getElementById('phoneError');
+      if (afterPlus.length === 10) {
+        errorDiv.style.display = 'none';
+        e.target.classList.remove('error');
+      } else if (afterPlus.length > 0) {
+        errorDiv.style.display = 'block';
+        e.target.classList.add('error');
+      } else {
+        errorDiv.style.display = 'none';
+        e.target.classList.remove('error');
+      }
+    });
+
+    // Валидация email
+    document.getElementById('email').addEventListener('input', function(e) {
+      const email = e.target.value;
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const errorDiv = document.getElementById('emailError');
+      if (!regex.test(email) && email.length > 0) {
+        errorDiv.style.display = 'block';
+        e.target.classList.add('error');
+      } else {
+        errorDiv.style.display = 'none';
+        e.target.classList.remove('error');
+      }
+    });
+
+    // Валидация паспорта
+    document.getElementById('passport').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/[^\d]/g, '');
+      if (value.length > 10) value = value.slice(0, 10);
+      let formatted = '';
+      if (value.length > 4) {
+        formatted = value.slice(0, 4) + ' ' + value.slice(4, 10);
+      } else {
+        formatted = value;
+      }
+      e.target.value = formatted;
+      
+      const regex = /^\d{4} \d{6}$/;
+      const errorDiv = document.getElementById('passportError');
+      if (!regex.test(formatted) && formatted.length > 0) {
+        errorDiv.style.display = 'block';
+        e.target.classList.add('error');
+      } else {
+        errorDiv.style.display = 'none';
+        e.target.classList.remove('error');
+      }
+    });
+
+    // Проверка паролей
+    document.getElementById('password_confirm').addEventListener('input', function(e) {
+      const password = document.getElementById('password').value;
+      const confirm = e.target.value;
+      const errorDiv = document.getElementById('passwordError');
+      if (password !== confirm && confirm.length > 0) {
+        errorDiv.style.display = 'block';
+        e.target.classList.add('error');
+      } else {
+        errorDiv.style.display = 'none';
+        e.target.classList.remove('error');
+      }
+    });
+
+    // Блокировка отправки формы при ошибках
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      const email = document.getElementById('email').value;
+      const passport = document.getElementById('passport').value;
+      const phone = document.getElementById('phone').value;
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('password_confirm').value;
+      
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const passportRegex = /^\d{4} \d{6}$/;
+      
+      // Очищаем телефон от пробелов и проверяем длину
+      const phoneCleaned = phone.replace(/[^\d]/g, '');
+      const phoneRegex = /^7\d{10}$/; // +7 даёт 7 и 10 цифр
+      
+      if (!emailRegex.test(email)) {
+        alert('Введите корректный email!');
+        e.preventDefault();
+        return;
+      }
+      
+      if (!passportRegex.test(passport)) {
+        alert('Паспорт должен быть в формате: 1234 567890');
+        e.preventDefault();
+        return;
+      }
+      
+      if (phone.length > 0 && !phoneRegex.test(phoneCleaned)) {
+        alert('Телефон должен содержать 10 цифр после +7 (например, +7 901 123 45 67)');
+        e.preventDefault();
+        return;
+      }
+      
+      if (password !== confirm) {
+        alert('Пароли не совпадают!');
+        e.preventDefault();
+        return;
+      }
+    });
+  </script>
 </body>
 </html>
