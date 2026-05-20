@@ -4,6 +4,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Аукционы — Премиум</title>
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .lot-card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .lot-card-link .lot-card {
+      transition: all 0.4s ease;
+    }
+    .lot-card-link:hover .lot-card {
+      border-color: #c9a96e;
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+  </style>
 </head>
 <body>
 
@@ -59,24 +74,26 @@
   <% } else { %>
     <div class="lots-grid">
       <% items.forEach(item => { %>
-        <div class="lot-card">
-          <div class="lot-card-image">🏛️</div>
-          <div class="lot-card-body">
-            <h3><a href="/item/<%= item.id %>"><%= item.name %></a></h3>
-            <p class="price"><%= item.start_price.toLocaleString() %> ₽</p>
-            <p class="meta"><%= item.auction_name %> | Лот №<%= item.lot_number %></p>
-            <p class="meta"><%= new Date(item.auction_date).toLocaleDateString('ru-RU') %></p>
-            <div class="actions">
-              <% if (user) { %>
-                <button onclick="addToFavorites('<%= item.id %>', '<%= item.name %>', <%= item.start_price %>)">Избранное</button>
-                <button onclick="addToCart('<%= item.id %>', '<%= item.name %>', <%= item.start_price %>)">В корзину</button>
-              <% } else { %>
-                <button onclick="alert('Войдите!')" style="opacity:0.5;">Избранное</button>
-                <button onclick="alert('Войдите!')" style="opacity:0.5;">Корзина</button>
-              <% } %>
+        <a href="/item/<%= item.id %>" class="lot-card-link" style="text-decoration: none; color: inherit; display: block;">
+          <div class="lot-card">
+            <div class="lot-card-image">🏛️</div>
+            <div class="lot-card-body">
+              <h3><%= item.name %></h3>
+              <p class="price"><%= item.start_price.toLocaleString() %> ₽</p>
+              <p class="meta"><%= item.auction_name %> | Лот №<%= item.lot_number %></p>
+              <p class="meta"><%= new Date(item.auction_date).toLocaleDateString('ru-RU') %></p>
+              <div class="actions">
+                <% if (user) { %>
+                  <button onclick="event.preventDefault(); event.stopPropagation(); addToFavorites('<%= item.id %>', '<%= item.name %>', <%= item.start_price %>)">Избранное</button>
+                  <button onclick="event.preventDefault(); event.stopPropagation(); addToCart('<%= item.id %>', '<%= item.name %>', <%= item.start_price %>)">В корзину</button>
+                <% } else { %>
+                  <button onclick="event.preventDefault(); event.stopPropagation(); alert('Войдите!')" style="opacity:0.5;">Избранное</button>
+                  <button onclick="event.preventDefault(); event.stopPropagation(); alert('Войдите!')" style="opacity:0.5;">Корзина</button>
+                <% } %>
+              </div>
             </div>
           </div>
-        </div>
+        </a>
       <% }) %>
     </div>
   <% } %>
@@ -94,7 +111,7 @@ function addToFavorites(id, name, price) {
   if (!favs.find(f => f.id === id)) {
     favs.push({ id, name, price });
     localStorage.setItem('favorites_' + userId, JSON.stringify(favs));
-    alert('Добавлено!');
+    alert('Добавлено в избранное!');
   } else { alert('Уже в избранном!'); }
 }
 function addToCart(id, name, price) {
@@ -102,7 +119,7 @@ function addToCart(id, name, price) {
   if (!cart.find(c => c.id === id)) {
     cart.push({ id, name, price });
     localStorage.setItem('cart_' + userId, JSON.stringify(cart));
-    alert('Добавлено!');
+    alert('Добавлено в корзину!');
   } else { alert('Уже в корзине!'); }
 }
 </script>
