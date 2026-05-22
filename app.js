@@ -726,8 +726,8 @@ app.post('/profile/topup/card', requireAuth, async (req, res) => {
   }
   
   const amountNum = parseInt(amount);
-  if (!amountNum || amountNum < 50000 || amountNum > 10000000) {
-  return res.send('<script>alert("Сумма должна быть от 50 000 до 10 000 000 ₽!"); window.history.back();</script>');
+  if (!amountNum || amountNum < 50000 || amountNum > 1000000000) {
+  return res.send('<script>alert("Сумма должна быть от 50 000 до 1 000 000 000 ₽!"); window.history.back();</script>');
   }
   
   // Имитация задержки "обработки платежа"
